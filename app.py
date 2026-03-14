@@ -2,7 +2,7 @@ import os
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for, Response
 import psycopg2
 import psycopg2.extras
-import razorpay
+# import razorpay  <-- COMMENTED OUT
 import csv
 import io
 import uuid
@@ -13,14 +13,16 @@ app = Flask(__name__)
 
 # --- SECURE CLOUD CONFIGURATION ---
 app.secret_key = os.getenv('FLASK_SECRET_KEY', 'super_secret_fallback_key')
-RAZORPAY_KEY_ID = os.getenv('RAZORPAY_KEY_ID', 'YOUR_TEST_KEY_ID_HERE')
-RAZORPAY_KEY_SECRET = os.getenv('RAZORPAY_KEY_SECRET', 'YOUR_TEST_KEY_SECRET_HERE')
 SUPABASE_URL = os.getenv('SUPABASE_URL', 'postgresql://postgres:password@localhost:5432/postgres')
 
-if RAZORPAY_KEY_ID != 'YOUR_TEST_KEY_ID_HERE':
-    razorpay_client = razorpay.Client(auth=(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET))
-else:
-    razorpay_client = None
+# --- RAZORPAY API CREDENTIALS COMMENTED OUT ---
+# RAZORPAY_KEY_ID = os.getenv('RAZORPAY_KEY_ID', 'YOUR_TEST_KEY_ID_HERE')
+# RAZORPAY_KEY_SECRET = os.getenv('RAZORPAY_KEY_SECRET', 'YOUR_TEST_KEY_SECRET_HERE')
+
+# if RAZORPAY_KEY_ID != 'YOUR_TEST_KEY_ID_HERE':
+#     razorpay_client = razorpay.Client(auth=(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET))
+# else:
+#     razorpay_client = None
 
 def get_db():
     return psycopg2.connect(SUPABASE_URL)
@@ -50,39 +52,28 @@ def login_required(f):
 # ==========================================
 @app.route('/')
 def index():
-    return render_template('index.html', razorpay_key_id=RAZORPAY_KEY_ID)
+    return render_template('index.html')
 
-@app.route('/api/create_order', methods=['POST'])
-def create_order():
-    if not razorpay_client: return jsonify({"error": "Razorpay keys missing"}), 500
-    data = request.json
-    amount_in_paise = int(data['amount']) * 100 
-    try:
-        order = razorpay_client.order.create({'amount': amount_in_paise, 'currency': 'INR', 'payment_capture': '1'})
-        return jsonify({"order_id": order['id'], "amount": amount_in_paise})
-    except Exception as e:
-        return jsonify({"error": str(e)}), 400
+# --- RAZORPAY API ROUTES COMMENTED OUT ---
+# @app.route('/api/create_order', methods=['POST'])
+# def create_order(): ...
+# 
+# @app.route('/api/verify_payment', methods=['POST'])
+# def verify_payment(): ...
 
-@app.route('/api/verify_payment', methods=['POST'])
-def verify_payment():
+# --- NEW ROUTE: Direct form submission (Self-Reporting) ---
+@app.route('/api/submit_donation', methods=['POST'])
+def submit_donation():
     data = request.json
-    try:
-        razorpay_client.utility.verify_payment_signature({
-            'razorpay_order_id': data['razorpay_order_id'],
-            'razorpay_payment_id': data['razorpay_payment_id'],
-            'razorpay_signature': data['razorpay_signature']
-        })
-        conn = get_db()
-        c = conn.cursor()
-        c.execute("INSERT INTO donations (name, email, amount, payment_id) VALUES (%s, %s, %s, %s)",
-                  (data['donor_name'], data['donor_email'], int(data['amount']), data['razorpay_payment_id']))
-        conn.commit()
-        conn.close()
-        return jsonify({"status": "success"})
-    except razorpay.errors.SignatureVerificationError:
-        return jsonify({"status": "error"}), 400
-    except psycopg2.IntegrityError:
-        return jsonify({"status": "success"})
+    conn = get_db()
+    c = conn.cursor()
+    # Generates a random fake payment_id just so the database doesn't crash
+    fake_payment_id = "CLAIMED_" + str(uuid.uuid4())[:8]
+    c.execute("INSERT INTO donations (name, email, amount, payment_id) VALUES (%s, %s, %s, %s)",
+              (data['name'], data['email'], int(data['amount']), fake_payment_id))
+    conn.commit()
+    conn.close()
+    return jsonify({"status": "success", "message": "Donation added to leaderboard!"})
 
 @app.route('/api/submit_ticket', methods=['POST'])
 def submit_ticket():
@@ -104,7 +95,6 @@ def get_leaderboard():
     conn.close()
     return jsonify(donations)
 
-# --- NEW: Get the single absolute latest donation ---
 @app.route('/api/latest_donation', methods=['GET'])
 def get_latest_donation():
     conn = get_db()
@@ -158,8 +148,8 @@ def sync_chat(session_id):
 # ==========================================
 # ADMIN ROUTES
 # ==========================================
-ADMIN_USERNAME = os.getenv('ADMIN_USERNAME', 'ashishadmin')
-ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD', 'anu@9936')
+ADMIN_USERNAME = os.getenv('ADMIN_USERNAME', 'admin')
+ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD', 'admin123')
 
 @app.route('/admin', methods=['GET', 'POST'])
 def admin_login():
