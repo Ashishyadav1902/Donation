@@ -25,22 +25,25 @@ def init_db():
     c.execute('''CREATE TABLE IF NOT EXISTS tickets (id SERIAL PRIMARY KEY, name TEXT NOT NULL, email TEXT NOT NULL, subject TEXT, message TEXT NOT NULL, status TEXT DEFAULT 'Open', created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
     c.execute('''CREATE TABLE IF NOT EXISTS chat_sessions (session_id TEXT PRIMARY KEY, name TEXT NOT NULL, email TEXT NOT NULL, status TEXT DEFAULT 'Active', created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
     c.execute('''CREATE TABLE IF NOT EXISTS chat_messages (id SERIAL PRIMARY KEY, session_id TEXT, sender TEXT, message TEXT, timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
+    
+    # NEW: Success Stories Table
+    c.execute('''CREATE TABLE IF NOT EXISTS stories (id SERIAL PRIMARY KEY, title TEXT NOT NULL, content TEXT NOT NULL, image_url TEXT NOT NULL, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
+    
     conn.commit()
 
-    # 2. Auto-Migration: Add new columns if they are missing (for existing databases)
+    # 2. Auto-Migration
     try:
         c.execute("ALTER TABLE donations ADD COLUMN mobile TEXT")
         conn.commit()
     except psycopg2.errors.DuplicateColumn:
-        conn.rollback() # Column already exists, ignore
+        conn.rollback()
         
     try:
         c.execute("ALTER TABLE donations ADD COLUMN status TEXT DEFAULT 'pending'")
-        # Update existing older donations to be 'approved' by default so they don't disappear
         c.execute("UPDATE donations SET status = 'approved' WHERE status IS NULL")
         conn.commit()
     except psycopg2.errors.DuplicateColumn:
-        conn.rollback() # Column already exists, ignore
+        conn.rollback()
 
     conn.close()
 
@@ -67,8 +70,6 @@ def submit_donation():
     conn = get_db()
     c = conn.cursor()
     fake_payment_id = "CLAIM_" + str(uuid.uuid4())[:8]
-    
-    # Insert with status 'pending' and new mobile field
     c.execute("INSERT INTO donations (name, email, mobile, amount, payment_id, status) VALUES (%s, %s, %s, %s, %s, 'pending')",
               (data['name'], data.get('email', ''), data.get('mobile', ''), int(data['amount']), fake_payment_id))
     conn.commit()
@@ -84,13 +85,12 @@ def submit_ticket():
               (data['name'], data['email'], data['subject'], data['message']))
     conn.commit()
     conn.close()
-    return jsonify({"status": "success", "message": "Ticket created!"})
+    return jsonify({"status": "success"})
 
 @app.route('/api/leaderboard', methods=['GET'])
 def get_leaderboard():
     conn = get_db()
     c = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-    # ONLY fetch approved donations
     c.execute("SELECT name, amount, date FROM donations WHERE status = 'approved' ORDER BY amount DESC LIMIT 50")
     donations = c.fetchall()
     conn.close()
@@ -100,7 +100,6 @@ def get_leaderboard():
 def get_latest_donation():
     conn = get_db()
     c = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-    # ONLY fetch approved
     c.execute("SELECT id, name, amount FROM donations WHERE status = 'approved' ORDER BY date DESC LIMIT 1")
     latest = c.fetchone()
     conn.close()
@@ -110,11 +109,20 @@ def get_latest_donation():
 def get_stats():
     conn = get_db()
     c = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-    # ONLY sum approved donations
     c.execute("SELECT SUM(amount) as total_amount, COUNT(id) as total_donors FROM donations WHERE status = 'approved'")
     stats = c.fetchone()
     conn.close()
     return jsonify({"total_amount": stats['total_amount'] or 0, "total_donors": stats['total_donors'] or 0})
+
+# NEW: Public Route to fetch success stories
+@app.route('/api/stories', methods=['GET'])
+def get_stories():
+    conn = get_db()
+    c = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    c.execute("SELECT * FROM stories ORDER BY created_at DESC")
+    stories = c.fetchall()
+    conn.close()
+    return jsonify(stories)
 
 # --- Live Chat ---
 @app.route('/api/chat/start', methods=['POST'])
@@ -147,6 +155,7 @@ def sync_chat(session_id):
     messages = c.fetchall()
     conn.close()
     return jsonify(messages)
+
 
 # ==========================================
 # ADMIN ROUTES
@@ -187,7 +196,6 @@ def get_full_stats():
 def get_all_donations():
     conn = get_db()
     c = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-    # Order by status so 'pending' shows at the top!
     c.execute("SELECT * FROM donations ORDER BY status DESC, date DESC")
     donations = c.fetchall()
     conn.close()
@@ -209,7 +217,6 @@ def add_manual():
     data = request.json
     conn = get_db()
     c = conn.cursor()
-    # Manual adds are instantly approved
     c.execute("INSERT INTO donations (name, email, mobile, amount, payment_id, status) VALUES (%s, %s, %s, %s, %s, 'approved')", 
               (data['name'], data.get('email', ''), data.get('mobile', ''), int(data['amount']), f"MANUAL_{datetime.now().timestamp()}"))
     conn.commit()
@@ -239,6 +246,29 @@ def export_donations():
     cw.writerow(['ID', 'Name', 'Email', 'Mobile', 'Amount (INR)', 'Status', 'Payment ID', 'Date'])
     for row in donations: cw.writerow(row)
     return Response(si.getvalue(), mimetype="text/csv", headers={"Content-disposition": "attachment; filename=donations_export.csv"})
+
+# NEW: Admin Routes for Success Stories
+@app.route('/admin/api/add_story', methods=['POST'])
+@login_required
+def add_story():
+    data = request.json
+    conn = get_db()
+    c = conn.cursor()
+    c.execute("INSERT INTO stories (title, content, image_url) VALUES (%s, %s, %s)", 
+              (data['title'], data['content'], data['image_url']))
+    conn.commit()
+    conn.close()
+    return jsonify({"status": "success"})
+
+@app.route('/admin/api/delete_story/<int:id>', methods=['POST'])
+@login_required
+def delete_story(id):
+    conn = get_db()
+    c = conn.cursor()
+    c.execute("DELETE FROM stories WHERE id = %s", (id,))
+    conn.commit()
+    conn.close()
+    return jsonify({"status": "success"})
 
 @app.route('/admin/api/tickets', methods=['GET'])
 @login_required
