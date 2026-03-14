@@ -151,8 +151,8 @@ def sync_chat(session_id):
 # ==========================================
 # ADMIN ROUTES
 # ==========================================
-ADMIN_USERNAME = os.getenv('ADMIN_USERNAME', 'admin')
-ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD', 'admin123')
+ADMIN_USERNAME = os.getenv('ADMIN_USERNAME', 'ashishadmin')
+ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD', 'anu@9936')
 
 @app.route('/admin', methods=['GET', 'POST'])
 def admin_login():
