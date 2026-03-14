@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hope Foundation - Empowering Children</title>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root { --primary: #4A90E2; --secondary: #50E3C2; --dark: #1f2937; --light: #f9fafb; --text: #333; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; scroll-behavior: smooth; }
+        body { background: #f0f4f8; color: var(--text); }
+        .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+        h2.section-title { text-align: center; color: var(--dark); font-size: 2.5rem; margin-bottom: 30px; }
+        h2.section-title span { color: var(--primary); }
+        
+        /* Navigation & Mobile Menu */
+        nav { background: white; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .logo { font-size: 1.5rem; font-weight: 700; color: var(--primary); text-decoration: none; }
+        .nav-links { list-style: none; display: flex; gap: 20px; transition: 0.3s; }
+        .nav-links a { text-decoration: none; color: var(--dark); font-weight: 600; }
+        .nav-links a:hover { color: var(--primary); }
+        .menu-toggle { display: none; font-size: 1.5rem; cursor: pointer; }
+
+        @media (max-width: 768px) {
+            .menu-toggle { display: block; }
+            .nav-links { display: none; flex-direction: column; position: absolute; top: 60px; left: 0; width: 100%; background: white; padding: 20px; box-shadow: 0 5px 10px rgba(0,0,0,0.1); }
+            .nav-links.active { display: flex; }
+        }
+
+        /* Hero Banner & Trust Badges */
+        .hero-banner { background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80') center/cover; height: 85vh; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; text-align: center; padding: 0 20px; }
+        .hero-banner h1 { font-size: 3.5rem; margin-bottom: 20px; }
+        .btn { padding: 12px 30px; background: var(--primary); color: white; border: none; border-radius: 30px; font-weight: 600; cursor: pointer; transition: 0.3s; text-decoration: none; display: inline-block; }
+        .btn:hover { background: #357ABD; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(74, 144, 226, 0.4); }
+        .trust-badges { margin-top: 30px; font-size: 0.9rem; color: #ddd; display: flex; gap: 15px; align-items: center; }
+
+        /* General UI Elements */
+        .glass-card { background: rgba(255, 255, 255, 0.9); border-radius: 15px; padding: 30px; box-shadow: 0 8px 30px rgba(0,0,0,0.05); margin-bottom: 40px; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+        @media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } .hero-banner h1 { font-size: 2.2rem; } }
+        
+        /* Form & Table */
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; }
+        .form-group input, .form-group textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; outline: none; }
+        table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
+        th { background: var(--primary); color: white; }
+
+        /* Impact Gallery */
+        .gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; }
+        .gallery img { width: 100%; height: 200px; object-fit: cover; border-radius: 10px; transition: 0.3s; }
+        .gallery img:hover { transform: scale(1.03); }
+
+        /* FAQ Accordion */
+        .faq-item { border-bottom: 1px solid #ddd; padding: 15px 0; }
+        .faq-question { font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; color: var(--dark); }
+        .faq-answer { display: none; padding-top: 10px; color: #555; font-size: 0.95rem; }
+
+        /* Live Toast Notification */
+        .toast { position: fixed; bottom: -100px; left: 20px; background: white; color: var(--dark); padding: 15px 25px; border-radius: 50px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border-left: 5px solid var(--secondary); display: flex; align-items: center; gap: 10px; transition: bottom 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); z-index: 9999; font-weight: 600; font-size: 0.9rem; }
+        .toast.show { bottom: 30px; }
+        .toast span.amount { color: var(--primary); font-size: 1.1rem; }
+        
+        /* Footer */
+        footer { background: var(--dark); color: white; padding: 50px 20px 20px; text-align: center; }
+
+        /* ================= LIVE CHAT CSS (UPDATED FOR BOT/ADMIN/USER) ================= */
+        .chat-widget { position: fixed; bottom: 30px; right: 30px; z-index: 9999; }
+        .chat-bubble { width: 60px; height: 60px; background: var(--primary); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: white; font-size: 1.5rem; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.2); transition: 0.3s; }
+        .chat-bubble:hover { transform: scale(1.1); }
+        .chat-window { display: none; width: 350px; height: 500px; background: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); flex-direction: column; overflow: hidden; position: absolute; bottom: 80px; right: 0; }
+        .chat-header { background: var(--primary); color: white; padding: 15px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+        .chat-close { cursor: pointer; font-size: 1.2rem; }
+        .chat-body { flex: 1; padding: 15px; overflow-y: auto; background: #f9fafb; display: flex; flex-direction: column; gap: 10px; }
+        .chat-footer { padding: 15px; border-top: 1px solid #eee; display: flex; gap: 10px; background: white; }
+        .chat-input { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 20px; outline: none; }
+        .chat-send { background: var(--primary); color: white; border: none; padding: 10px 15px; border-radius: 20px; cursor: pointer; }
+        
+        /* CHAT MESSAGES DIFFERENTIATION */
+        .msg { max-width: 80%; padding: 10px 15px; border-radius: 15px; font-size: 0.9rem; line-height: 1.4; position: relative; margin-top: 15px; }
+        .msg-label { font-size: 0.7rem; font-weight: bold; position: absolute; top: -18px; color: #777; }
+        
+        /* 1. Support Team Message */
+        .msg.admin { background: #d1fae5; color: #065f46; align-self: flex-start; border-bottom-left-radius: 2px; }
+        .msg.admin .msg-label { left: 5px; }
+
+        /* 2. Bot Message */
+        .msg.bot { background: #e0e7ff; color: #3730a3; align-self: flex-start; border-bottom-left-radius: 2px; }
+        .msg.bot .msg-label { left: 5px; }
+
+        /* 3. User Message */
+        .msg.user { background: var(--primary); color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
+        .msg.user .msg-label { right: 5px; color: var(--primary); }
+
+        #chatStartForm { padding: 20px; display: flex; flex-direction: column; gap: 15px; justify-content: center; height: 100%; }
+        #chatUi { display: none; flex-direction: column; height: 100%; }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="#" class="logo">HopeFoundation.</a>
+        <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="#about" onclick="toggleMenu()">About</a></li>
+            <li><a href="#gallery" onclick="toggleMenu()">Impact</a></li>
+            <li><a href="#leaderboard" onclick="toggleMenu()">Leaderboard</a></li>
+            <li><a href="#faq" onclick="toggleMenu()">FAQ</a></li>
+        </ul>
+        <a href="#donate" class="btn" style="padding: 8px 20px;">Donate Now</a>
+    </nav>
+
+    <header class="hero-banner">
+        <h1>Empower a Child's Future ❤️</h1>
+        <p>Join thousands of donors providing education, medical aid, and specialized care to children in need.</p>
+        <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+            <a href="#donate" class="btn" style="font-size: 1.2rem; padding: 15px 40px; background: var(--secondary); color: var(--dark);">Donate Instantly</a>
+        </div>
+        <div class="trust-badges">
+            <span>🔒 100% Secure Payments</span> | <span>✅ Verified NGO</span> | <span>🧾 80G Tax Exemption</span>
+        </div>
+    </header>
+
+    <div class="container">
+        <section id="about" class="grid-2" style="align-items: center; margin-bottom: 60px;">
+            <div>
+                <h2 style="font-size: 2rem; color: var(--primary);">Our Impact</h2>
+                <p style="line-height: 1.8; color: #555; margin-top: 15px;">Every single rupee you donate goes directly towards purchasing specialized equipment, funding therapies, and building inclusive classrooms. We believe in complete transparency.</p>
+            </div>
+            <div class="glass-card text-center" style="margin-bottom: 0;">
+                <h2>Total Funds Raised</h2>
+                <h1 style="font-size: 3rem; color: var(--secondary);">₹<span id="totalAmount">0</span></h1>
+                <p>Supported by <span id="totalDonors" style="font-weight:bold; color: var(--primary);">0</span> Heroes</p>
+            </div>
+        </section>
+
+        <section id="gallery" style="margin-bottom: 60px;">
+            <h2 class="section-title">Where Your <span>Money Goes</span></h2>
+            <div class="gallery">
+                <img src="https://images.unsplash.com/photo-1516627145497-ae6968895b74?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Education">
+                <img src="https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Community">
+                <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Classroom">
+                <img src="https://images.unsplash.com/photo-1542810634-71277d95dcbb?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Care">
+            </div>
+        </section>
+
+        <section id="donate" class="glass-card" style="border: 2px solid var(--primary);">
+            <h2 class="section-title">Make a <span>Secure Donation</span></h2>
+            <form id="paymentForm" class="grid-2">
+                <div class="form-group">
+                    <label>Full Name *</label>
+                    <input type="text" id="d_name" required placeholder="Your Name">
+                </div>
+                <div class="form-group">
+                    <label>Email Address *</label>
+                    <input type="email" id="d_email" required placeholder="For receipt">
+                </div>
+                <div class="form-group">
+                    <label>Amount (₹) *</label>
+                    <input type="number" id="d_amount" required placeholder="e.g. 1000" min="10">
+                </div>
+                <div class="form-group" style="display: flex; align-items: flex-end;">
+                    <button type="submit" class="btn" id="payBtn" style="width: 100%; height: 50px; font-size: 1.1rem;">Pay via Razorpay ➔</button>
+                </div>
+            </form>
+            <p id="payStatus" style="text-align: center; margin-top: 15px; font-weight: bold;"></p>
+        </section>
+
+        <section id="leaderboard" class="glass-card">
+            <h2 class="section-title">Wall of <span>Heroes</span></h2>
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead><tr><th>Rank</th><th>Donor Name</th><th>Amount</th><th>Date</th></tr></thead>
+                    <tbody id="leaderboardBody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <div class="grid-2" id="faq">
+            <section class="glass-card">
+                <h2>Frequently Asked Questions</h2>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">Is my donation tax-deductible? <span>+</span></div>
+                    <div class="faq-answer">Yes, all donations are 80G tax-exempt. You will receive a receipt on your email.</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">How is the money used? <span>+</span></div>
+                    <div class="faq-answer">100% of public donations go directly towards child welfare programs, medical equipment, and schooling.</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">Is my payment secure? <span>+</span></div>
+                    <div class="faq-answer">Absolutely. We use Razorpay, India's leading payment gateway with bank-level security.</div>
+                </div>
+            </section>
+
+            <section class="glass-card">
+                <h2>Need Help? Open a Ticket</h2>
+                <form id="ticketForm">
+                    <div class="form-group"><input type="text" id="t_name" required placeholder="Name"></div>
+                    <div class="form-group"><input type="email" id="t_email" required placeholder="Email"></div>
+                    <div class="form-group"><input type="text" id="t_subject" required placeholder="Subject"></div>
+                    <div class="form-group"><textarea id="t_message" rows="3" required placeholder="Message..."></textarea></div>
+                    <button type="submit" class="btn" id="ticketBtn" style="width: 100%;">Submit Ticket</button>
+                    <p id="ticketStatus" style="margin-top: 10px; text-align: center;"></p>
+                </form>
+            </section>
+        </div>
+    </div>
+
+    <div id="liveToast" class="toast">
+        🔔 <span id="toastName">Someone</span> just donated <span class="amount" id="toastAmount">₹500</span>!
+    </div>
+
+    <div class="chat-widget">
+        <div class="chat-window" id="chatWindow">
+            <div class="chat-header">
+                <span>💬 Support Chat</span>
+                <span class="chat-close" onclick="toggleChat()">✖</span>
+            </div>
+            
+            <form id="chatStartForm">
+                <p style="text-align: center; color: #555;">Please enter your details to start chatting with an agent.</p>
+                <input type="text" id="c_name" required placeholder="Your Name" style="padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                <input type="email" id="c_email" required placeholder="Your Email" style="padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                <button type="submit" class="btn" style="width: 100%;">Start Chat</button>
+            </form>
+
+            <div id="chatUi">
+                <div class="chat-body" id="chatBody"></div>
+                <div class="chat-footer">
+                    <input type="text" id="chatMsgInput" class="chat-input" placeholder="Type a message..." onkeypress="handleChatEnter(event)">
+                    <button class="chat-send" onclick="sendChatMessage()">➤</button>
+                </div>
+            </div>
+        </div>
+        <div class="chat-bubble" onclick="toggleChat()">💬</div>
+    </div>
+
+    <footer>
+        <h3 style="margin-bottom: 10px; color: var(--secondary);">HopeFoundation.</h3>
+        <p style="color: #ccc; font-size: 0.9rem; margin-bottom: 20px;">Empowering specially-abled children across India.</p>
+        <p>&copy; 2026 Hope Foundation. All rights reserved. Developed by Ashish.</p>
+    </footer>
+
+    <script>
+        const RAZORPAY_KEY = "{{ razorpay_key_id }}";
+
+        // UI Interactions
+        function toggleMenu() { document.getElementById('navLinks').classList.toggle('active'); }
+        function toggleFaq(element) {
+            let answer = element.nextElementSibling; let icon = element.querySelector('span');
+            if (answer.style.display === "block") { answer.style.display = "none"; icon.innerText = "+"; } 
+            else { answer.style.display = "block"; icon.innerText = "−"; }
+        }
+
+        // Core Initializers
+        document.addEventListener("DOMContentLoaded", () => {
+            fetchStats();
+            fetchLeaderboard();
+            startLiveToast();
+
+            // Razorpay Payment Handler
+            document.getElementById('paymentForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const btn = document.getElementById('payBtn');
+                const status = document.getElementById('payStatus');
+                btn.innerText = "Processing..."; btn.disabled = true;
+
+                const donor_name = document.getElementById('d_name').value;
+                const donor_email = document.getElementById('d_email').value;
+                const amount = document.getElementById('d_amount').value;
+
+                try {
+                    const orderRes = await fetch('/api/create_order', {
+                        method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ amount: amount })
+                    });
+                    const orderData = await orderRes.json();
+                    if(orderData.error) throw new Error(orderData.error);
+
+                    const options = {
+                        "key": RAZORPAY_KEY, "amount": orderData.amount, "currency": "INR",
+                        "name": "Hope Foundation", "description": "Donation", "order_id": orderData.order_id,
+                        "handler": async function (response){
+                            status.innerText = "Verifying payment..."; status.style.color = "orange";
+                            const verifyRes = await fetch('/api/verify_payment', {
+                                method: 'POST', headers: {'Content-Type': 'application/json'},
+                                body: JSON.stringify({
+                                    razorpay_payment_id: response.razorpay_payment_id,
+                                    razorpay_order_id: response.razorpay_order_id,
+                                    razorpay_signature: response.razorpay_signature,
+                                    donor_name: donor_name, donor_email: donor_email, amount: amount
+                                })
+                            });
+                            const verifyData = await verifyRes.json();
+                            if(verifyData.status === 'success'){
+                                status.style.color = "green"; status.innerText = "Success! You are on the leaderboard.";
+                                document.getElementById('paymentForm').reset();
+                                fetchStats(); fetchLeaderboard();
+                            } else {
+                                status.style.color = "red"; status.innerText = "Verification failed.";
+                            }
+                        },
+                        "prefill": { "name": donor_name, "email": donor_email },
+                        "theme": { "color": "#4A90E2" }
+                    };
+                    const rzp = new Razorpay(options);
+                    rzp.open();
+                } catch (err) {
+                    alert("Error: " + err.message);
+                } finally {
+                    btn.innerText = "Pay via Razorpay ➔"; btn.disabled = false;
+                }
+            });
+
+            // Support Ticket Handler
+            document.getElementById('ticketForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const btn = document.getElementById('ticketBtn');
+                btn.innerText = "Sending..."; btn.disabled = true;
+
+                const data = {
+                    name: document.getElementById('t_name').value, email: document.getElementById('t_email').value,
+                    subject: document.getElementById('t_subject').value, message: document.getElementById('t_message').value
+                };
+
+                const res = await fetch('/api/submit_ticket', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data) });
+                const result = await res.json();
+                
+                const status = document.getElementById('ticketStatus');
+                status.innerText = result.message; status.style.color = result.status === 'success' ? "green" : "red";
+                if(result.status === 'success') document.getElementById('ticketForm').reset();
+                btn.innerText = "Submit Ticket"; btn.disabled = false;
+            });
+        });
+
+        // Data Fetching Functions
+        async function fetchStats() {
+            const res = await fetch('/api/stats'); const data = await res.json();
+            document.getElementById('totalAmount').innerText = data.total_amount.toLocaleString('en-IN');
+            document.getElementById('totalDonors').innerText = data.total_donors;
+        }
+
+        async function fetchLeaderboard() {
+            const res = await fetch('/api/leaderboard'); const data = await res.json();
+            const tbody = document.getElementById('leaderboardBody'); tbody.innerHTML = '';
+            data.forEach((d, i) => {
+                tbody.innerHTML += `<tr><td><strong>#${i + 1}</strong></td><td>${d.name}</td><td style="color:var(--primary);font-weight:bold;">₹${d.amount.toLocaleString('en-IN')}</td><td>${new Date(d.date).toLocaleDateString()}</td></tr>`;
+            });
+        }
+
+        // Live Toast Notification Logic
+        async function startLiveToast() {
+            const res = await fetch('/api/recent');
+            const recentDonors = await res.json();
+            if(recentDonors.length === 0) return;
+
+            let currentIndex = 0;
+            const toast = document.getElementById('liveToast');
+            const toastName = document.getElementById('toastName');
+            const toastAmount = document.getElementById('toastAmount');
+
+            setInterval(() => {
+                let donor = recentDonors[currentIndex];
+                toastName.innerText = donor.name;
+                toastAmount.innerText = `₹${donor.amount.toLocaleString('en-IN')}`;
+                toast.classList.add('show');
+                setTimeout(() => { toast.classList.remove('show'); }, 4000);
+                currentIndex = (currentIndex + 1) % recentDonors.length;
+            }, 8000);
+        }
+
+        // Live Chat User Logic
+        let chatSessionId = localStorage.getItem('chatSessionId');
+        let chatPollInterval;
+
+        function toggleChat() {
+            const win = document.getElementById('chatWindow');
+            win.style.display = win.style.display === 'flex' ? 'none' : 'flex';
+            if(win.style.display === 'flex' && chatSessionId) {
+                document.getElementById('chatStartForm').style.display = 'none';
+                document.getElementById('chatUi').style.display = 'flex';
+                syncChat();
+                if(!chatPollInterval) chatPollInterval = setInterval(syncChat, 3000);
+            }
+        }
+
+        document.getElementById('chatStartForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const data = { name: document.getElementById('c_name').value, email: document.getElementById('c_email').value };
+            const res = await fetch('/api/chat/start', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) });
+            const result = await res.json();
+            
+            chatSessionId = result.session_id;
+            localStorage.setItem('chatSessionId', chatSessionId);
+            
+            document.getElementById('chatStartForm').style.display = 'none';
+            document.getElementById('chatUi').style.display = 'flex';
+            syncChat();
+            chatPollInterval = setInterval(syncChat, 3000);
+        });
+
+        // THIS FUNCTION HAS BEEN UPDATED TO SHOW DIFFERENCES BETWEEN USER, ADMIN, AND BOT
+        async function syncChat() {
+            if(!chatSessionId) return;
+            const res = await fetch(`/api/chat/sync/${chatSessionId}`);
+            const messages = await res.json();
+            const body = document.getElementById('chatBody');
+            body.innerHTML = '';
+            
+            messages.forEach(m => {
+                let cssClass = '';
+                let label = '';
+                
+                if (m.sender === 'user') {
+                    cssClass = 'user';
+                    label = '👤 You';
+                } else if (m.sender === 'bot') {
+                    cssClass = 'bot';
+                    label = '🤖 Assistant';
+                } else {
+                    cssClass = 'admin';
+                    label = '👨‍💻 Support Team';
+                }
+                
+                body.innerHTML += `<div class="msg ${cssClass}"><span class="msg-label">${label}</span>${m.message}</div>`;
+            });
+            body.scrollTop = body.scrollHeight;
+        }
+
+        async function sendChatMessage() {
+            const input = document.getElementById('chatMsgInput');
+            const text = input.value.trim();
+            if(!text || !chatSessionId) return;
+            input.value = '';
+            document.getElementById('chatBody').innerHTML += `<div class="msg user"><span class="msg-label">👤 You</span>${text}</div>`;
+            document.getElementById('chatBody').scrollTop = document.getElementById('chatBody').scrollHeight;
+            await fetch('/api/chat/send', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ session_id: chatSessionId, message: text }) });
+            syncChat();
+        }
+
+        function handleChatEnter(e) { if(e.key === 'Enter') sendChatMessage(); }
+    </script>
+</body>
+</html>
