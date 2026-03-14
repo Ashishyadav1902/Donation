@@ -20,18 +20,14 @@ def get_db():
 def init_db():
     conn = get_db()
     c = conn.cursor()
-    # 1. Create tables if they don't exist
     c.execute('''CREATE TABLE IF NOT EXISTS donations (id SERIAL PRIMARY KEY, name TEXT NOT NULL, email TEXT, amount INTEGER NOT NULL, payment_id TEXT UNIQUE, date TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
     c.execute('''CREATE TABLE IF NOT EXISTS tickets (id SERIAL PRIMARY KEY, name TEXT NOT NULL, email TEXT NOT NULL, subject TEXT, message TEXT NOT NULL, status TEXT DEFAULT 'Open', created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
     c.execute('''CREATE TABLE IF NOT EXISTS chat_sessions (session_id TEXT PRIMARY KEY, name TEXT NOT NULL, email TEXT NOT NULL, status TEXT DEFAULT 'Active', created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
     c.execute('''CREATE TABLE IF NOT EXISTS chat_messages (id SERIAL PRIMARY KEY, session_id TEXT, sender TEXT, message TEXT, timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
-    
-    # NEW: Success Stories Table
     c.execute('''CREATE TABLE IF NOT EXISTS stories (id SERIAL PRIMARY KEY, title TEXT NOT NULL, content TEXT NOT NULL, image_url TEXT NOT NULL, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
-    
     conn.commit()
 
-    # 2. Auto-Migration
+    # Auto-Migration for new columns
     try:
         c.execute("ALTER TABLE donations ADD COLUMN mobile TEXT")
         conn.commit()
@@ -41,6 +37,12 @@ def init_db():
     try:
         c.execute("ALTER TABLE donations ADD COLUMN status TEXT DEFAULT 'pending'")
         c.execute("UPDATE donations SET status = 'approved' WHERE status IS NULL")
+        conn.commit()
+    except psycopg2.errors.DuplicateColumn:
+        conn.rollback()
+
+    try:
+        c.execute("ALTER TABLE donations ADD COLUMN screenshot TEXT")
         conn.commit()
     except psycopg2.errors.DuplicateColumn:
         conn.rollback()
@@ -70,8 +72,10 @@ def submit_donation():
     conn = get_db()
     c = conn.cursor()
     fake_payment_id = "CLAIM_" + str(uuid.uuid4())[:8]
-    c.execute("INSERT INTO donations (name, email, mobile, amount, payment_id, status) VALUES (%s, %s, %s, %s, %s, 'pending')",
-              (data['name'], data.get('email', ''), data.get('mobile', ''), int(data['amount']), fake_payment_id))
+    
+    # Save the screenshot directly into the database
+    c.execute("INSERT INTO donations (name, email, mobile, amount, payment_id, status, screenshot) VALUES (%s, %s, %s, %s, %s, 'pending', %s)",
+              (data['name'], data.get('email', ''), data.get('mobile', ''), int(data['amount']), fake_payment_id, data.get('screenshot', '')))
     conn.commit()
     conn.close()
     return jsonify({"status": "success", "message": "Donation added! Pending admin approval."})
@@ -114,7 +118,6 @@ def get_stats():
     conn.close()
     return jsonify({"total_amount": stats['total_amount'] or 0, "total_donors": stats['total_donors'] or 0})
 
-# NEW: Public Route to fetch success stories
 @app.route('/api/stories', methods=['GET'])
 def get_stories():
     conn = get_db()
@@ -206,7 +209,8 @@ def get_all_donations():
 def approve_donation(id):
     conn = get_db()
     c = conn.cursor()
-    c.execute("UPDATE donations SET status = 'approved' WHERE id = %s", (id,))
+    # AUTO DELETE SCREENSHOT TO SAVE DB SPACE ONCE APPROVED
+    c.execute("UPDATE donations SET status = 'approved', screenshot = NULL WHERE id = %s", (id,))
     conn.commit()
     conn.close()
     return jsonify({"status": "success"})
@@ -247,15 +251,13 @@ def export_donations():
     for row in donations: cw.writerow(row)
     return Response(si.getvalue(), mimetype="text/csv", headers={"Content-disposition": "attachment; filename=donations_export.csv"})
 
-# NEW: Admin Routes for Success Stories
 @app.route('/admin/api/add_story', methods=['POST'])
 @login_required
 def add_story():
     data = request.json
     conn = get_db()
     c = conn.cursor()
-    c.execute("INSERT INTO stories (title, content, image_url) VALUES (%s, %s, %s)", 
-              (data['title'], data['content'], data['image_url']))
+    c.execute("INSERT INTO stories (title, content, image_url) VALUES (%s, %s, %s)", (data['title'], data['content'], data['image_url']))
     conn.commit()
     conn.close()
     return jsonify({"status": "success"})
