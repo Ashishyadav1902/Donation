@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Hope Foundation - Empowering Specially-Abled Children in India</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     
     <style>
         :root { --primary: #4A90E2; --secondary: #50E3C2; --dark: #1f2937; --light: #f9fafb; --text: #333; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; scroll-behavior: smooth; }
-        body { background: #f0f4f8; color: var(--text); overflow-x: hidden; }
+        body { background: #f0f4f8; color: var(--text); overflow-x: hidden; width: 100%; }
         .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
         h2.section-title { text-align: center; color: var(--dark); font-size: 2.5rem; margin-bottom: 30px; }
         h2.section-title span { color: var(--primary); }
@@ -21,12 +21,6 @@
         .nav-links a:hover { color: var(--primary); }
         .menu-toggle { display: none; font-size: 1.5rem; cursor: pointer; }
 
-        @media (max-width: 768px) {
-            .menu-toggle { display: block; }
-            .nav-links { display: none; flex-direction: column; position: absolute; top: 60px; left: 0; width: 100%; background: white; padding: 20px; box-shadow: 0 5px 10px rgba(0,0,0,0.1); }
-            .nav-links.active { display: flex; }
-        }
-
         .fade-up { opacity: 0; transform: translateY(40px); transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
         .fade-up.visible { opacity: 1; transform: translateY(0); }
 
@@ -34,7 +28,7 @@
         .hero-banner h1 { font-size: 3.5rem; margin-bottom: 20px; animation: slideInDown 1s ease-out; text-shadow: 2px 2px 10px rgba(0,0,0,0.5); }
         @keyframes slideInDown { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         
-        .btn { padding: 12px 30px; background: var(--primary); color: white; border: none; border-radius: 30px; font-weight: 600; cursor: pointer; transition: 0.3s; text-decoration: none; display: inline-block; text-align: center;}
+        .btn { padding: 15px 30px; background: var(--primary); color: white; border: none; border-radius: 30px; font-weight: 600; cursor: pointer; transition: 0.3s; text-decoration: none; display: inline-block; text-align: center;}
         .btn:hover { background: #357ABD; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(74, 144, 226, 0.4); }
         .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
         .btn-outline:hover { background: var(--primary); color: white; }
@@ -47,20 +41,30 @@
 
         .glass-card { background: rgba(255, 255, 255, 0.9); border-radius: 15px; padding: 30px; box-shadow: 0 8px 30px rgba(0,0,0,0.05); margin-bottom: 40px; }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
-        @media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } .hero-banner h1 { font-size: 2.2rem; } }
         
         .mission-vision-box { background: white; padding: 25px; border-radius: 10px; border-left: 5px solid var(--primary); box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px; }
         .mission-vision-box h3 { color: var(--dark); margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
         .about-image { width: 100%; height: 100%; object-fit: cover; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
 
-        .form-group { margin-bottom: 20px; }
+        .form-group { margin-bottom: 20px; width: 100%; }
         .form-group label { display: block; margin-bottom: 8px; font-weight: 600; }
-        .form-group input, .form-group textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; outline: none; transition: 0.3s; }
+        /* Fixed mobile zoom and styling issues */
+        .form-group input, .form-group textarea { 
+            width: 100%; 
+            padding: 15px; /* Larger touch area for phones */
+            border: 1px solid #ddd; 
+            border-radius: 8px; 
+            outline: none; 
+            transition: 0.3s; 
+            font-size: 16px !important; /* CRITICAL: Prevents iOS from zooming in */
+            background: #fff;
+            -webkit-appearance: none; /* Prevents custom iOS styling */
+        }
         .form-group input:focus { border-color: var(--primary); box-shadow: 0 0 5px rgba(74, 144, 226, 0.3); }
         
         table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; }
         th, td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
-        th { background: var(--primary); color: white; }
+        th { background: var(--primary); color: white; white-space: nowrap; }
 
         .gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; }
         .gallery img { width: 100%; height: 250px; object-fit: cover; border-radius: 10px; transition: transform 0.4s; cursor: pointer; }
@@ -70,7 +74,7 @@
         .faq-question { font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; color: var(--dark); }
         .faq-answer { display: none; padding-top: 10px; color: #555; font-size: 0.95rem; line-height: 1.6; }
 
-        .toast { position: fixed; bottom: -100px; left: 20px; background: white; color: var(--dark); padding: 15px 25px; border-radius: 50px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border-left: 5px solid var(--secondary); display: flex; align-items: center; gap: 10px; transition: bottom 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); z-index: 9999; font-weight: 600; font-size: 0.9rem; }
+        .toast { position: fixed; bottom: -100px; left: 20px; background: white; color: var(--dark); padding: 15px 25px; border-radius: 50px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border-left: 5px solid var(--secondary); display: flex; align-items: center; gap: 10px; transition: bottom 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); z-index: 9999; font-weight: 600; font-size: 0.9rem; max-width: 90vw; }
         .toast.show { bottom: 30px; }
         .toast span.amount { color: var(--primary); font-size: 1.1rem; }
         
@@ -79,18 +83,17 @@
         /* LIVE CHAT WIDGET */
         .chat-widget { position: fixed; bottom: 30px; right: 30px; z-index: 9999; }
         .chat-bubble { width: 60px; height: 60px; background: var(--primary); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: white; font-size: 1.5rem; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.2); transition: 0.3s; }
-        .chat-bubble:hover { transform: scale(1.1); }
         .chat-window { display: none; width: 350px; height: 500px; background: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); flex-direction: column; overflow: hidden; position: absolute; bottom: 80px; right: 0; }
         .chat-header { background: var(--primary); color: white; padding: 15px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
-        .chat-close { cursor: pointer; font-size: 1.2rem; }
+        .chat-close { cursor: pointer; font-size: 1.2rem; padding: 5px; }
         .chat-body { flex: 1; padding: 15px; overflow-y: auto; background: #f9fafb; display: flex; flex-direction: column; gap: 10px; }
         .chat-footer { padding: 15px; border-top: 1px solid #eee; display: flex; gap: 10px; background: white; }
-        .chat-input { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 20px; outline: none; }
+        .chat-input { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 20px; outline: none; font-size: 16px !important; }
         .chat-send { background: var(--primary); color: white; border: none; padding: 10px 15px; border-radius: 20px; cursor: pointer; }
         
-        .msg { max-width: 80%; padding: 10px 15px; border-radius: 15px; font-size: 0.9rem; line-height: 1.4; position: relative; margin-top: 15px; animation: fadeIn 0.3s ease-in; }
+        .msg { max-width: 85%; padding: 10px 15px; border-radius: 15px; font-size: 0.9rem; line-height: 1.4; position: relative; margin-top: 15px; animation: fadeIn 0.3s ease-in; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-        .msg-label { font-size: 0.7rem; font-weight: bold; position: absolute; top: -18px; color: #777; }
+        .msg-label { font-size: 0.7rem; font-weight: bold; position: absolute; top: -18px; color: #777; white-space: nowrap; }
         
         .msg.admin { background: #d1fae5; color: #065f46; align-self: flex-start; border-bottom-left-radius: 2px; }
         .msg.admin .msg-label { left: 5px; }
@@ -101,6 +104,28 @@
 
         #chatStartForm { padding: 20px; display: flex; flex-direction: column; gap: 15px; justify-content: center; height: 100%; }
         #chatUi { display: none; flex-direction: column; height: 100%; }
+
+        /* ================= MOBILE RESPONSIVE FIXES ================= */
+        @media (max-width: 768px) {
+            .menu-toggle { display: block; }
+            .nav-links { display: none; flex-direction: column; position: absolute; top: 60px; left: 0; width: 100%; background: white; padding: 20px; box-shadow: 0 5px 10px rgba(0,0,0,0.1); }
+            .nav-links.active { display: flex; }
+            
+            .hero-banner h1 { font-size: 2.2rem; }
+            .container { padding: 0 15px; }
+            .glass-card { padding: 20px; }
+            h2.section-title { font-size: 2rem; }
+            
+            /* THIS FIXES THE MOBILE FORM OVERFLOW / SCROLLING ISSUE */
+            .grid-2 { display: flex; flex-direction: column; gap: 20px; }
+            .form-group[style*="grid-column: span 2"] { grid-column: auto !important; }
+            
+            /* Responsive Chat Window */
+            .chat-widget { bottom: 15px; right: 15px; }
+            .chat-window { width: calc(100vw - 30px); right: 0; bottom: 70px; height: 60vh; }
+            
+            .toast { left: 15px; right: 15px; bottom: -100px; justify-content: center; text-align: center; }
+        }
     </style>
 </head>
 <body>
@@ -212,7 +237,7 @@
 
         <section id="leaderboard" class="glass-card fade-up">
             <h2 class="section-title">Wall of <span>Heroes</span></h2>
-            <div style="overflow-x: auto;">
+            <div style="overflow-x: auto; padding-bottom: 10px;">
                 <table>
                     <thead><tr><th>Rank</th><th>Donor Name</th><th>Amount</th><th>Date</th></tr></thead>
                     <tbody id="leaderboardBody"></tbody>
@@ -260,9 +285,15 @@
             <div class="chat-header"><span>💬 Support Chat</span><span class="chat-close" onclick="toggleChat()">✖</span></div>
             <form id="chatStartForm">
                 <p style="text-align: center; color: #555;">Enter details to start chatting.</p>
-                <input type="text" id="c_name" required placeholder="Your Name" style="padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
-                <input type="email" id="c_email" required placeholder="Your Email" style="padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
-                <button type="submit" class="btn" style="width: 100%;">Start Chat</button>
+                <div class="form-group" style="padding: 0 15px;">
+                    <input type="text" id="c_name" required placeholder="Your Name">
+                </div>
+                <div class="form-group" style="padding: 0 15px;">
+                    <input type="email" id="c_email" required placeholder="Your Email">
+                </div>
+                <div style="padding: 0 15px;">
+                    <button type="submit" class="btn" style="width: 100%;">Start Chat</button>
+                </div>
             </form>
             <div id="chatUi">
                 <div class="chat-body" id="chatBody"></div>
@@ -299,7 +330,6 @@
             fetchLeaderboard();
             startLatestDonorCheck();
 
-            // DIRECT DB SUBMISSION HANDLER WITH MOBILE
             document.getElementById('paymentForm').addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const btn = document.getElementById('payBtn');
@@ -323,7 +353,6 @@
                     
                     if(result.status === 'success'){
                         status.style.color = "green"; 
-                        // UPDATED SUCCESS MESSAGE FOR APPROVAL SYSTEM
                         status.innerText = "Thank you! Your donation is pending admin verification and will appear on the leaderboard shortly.";
                         document.getElementById('paymentForm').reset();
                     } else {
@@ -336,7 +365,6 @@
                 }
             });
 
-            // Support Ticket
             document.getElementById('ticketForm').addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const btn = document.getElementById('ticketBtn'); btn.innerText = "Sending..."; btn.disabled = true;
@@ -382,7 +410,6 @@
             setInterval(checkLatestDonor, 10000);
         }
 
-        // Live Chat Logic
         let chatSessionId = localStorage.getItem('chatSessionId');
         let chatPollInterval;
         let loadedMessageCount = 0; 
