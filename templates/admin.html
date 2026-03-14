@@ -6,7 +6,7 @@
     <title>NGO Admin Workspace</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #4A90E2; --dark: #1f2937; --bg: #f3f4f6; --text: #374151; --white: #ffffff; --danger: #ef4444; --success: #10b981; }
+        :root { --primary: #4A90E2; --dark: #1f2937; --bg: #f3f4f6; --text: #374151; --white: #ffffff; --danger: #ef4444; --success: #10b981; --warning: #f59e0b; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
         body { background: var(--bg); color: var(--text); display: flex; height: 100vh; overflow: hidden; }
 
@@ -39,15 +39,19 @@
         .btn { padding: 8px 15px; background: var(--primary); color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 0.9rem; text-decoration: none; }
         .btn-success { background: var(--success); }
         .btn-danger { background: var(--danger); }
+        .btn-warning { background: var(--warning); color: white; }
         input.search-bar { padding: 8px 15px; border: 1px solid #ddd; border-radius: 5px; width: 250px; outline: none; }
 
         table { width: 100%; border-collapse: collapse; text-align: left; }
         th, td { padding: 12px 15px; border-bottom: 1px solid #e5e7eb; }
         th { background: #f9fafb; color: #4b5563; font-weight: 600; text-transform: uppercase; font-size: 0.8rem; }
         tr:hover { background: #f9fafb; }
-        .badge { padding: 4px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; }
+        
+        .badge { padding: 4px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; text-transform: uppercase; }
         .badge.open { background: #fef3c7; color: #d97706; }
-        .badge.resolved { background: #d1fae5; color: #059669; }
+        .badge.resolved, .badge.approved { background: #d1fae5; color: #059669; }
+        .badge.pending { background: #fee2e2; color: #b91c1c; }
+
         .form-row { display: flex; gap: 15px; margin-bottom: 15px; }
         .form-row input { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 5px; }
     </style>
@@ -68,7 +72,7 @@
         <div class="sidebar-header">HopeWorkspace.</div>
         <div class="nav-items">
             <a class="nav-item active" onclick="switchTab('dashboard', this)">📊 Dashboard</a>
-            <a class="nav-item" onclick="switchTab('donations', this)">💰 All Donations</a>
+            <a class="nav-item" onclick="switchTab('donations', this)">💰 Approvals & DB</a>
             <a class="nav-item" onclick="switchTab('support', this)">✉️ Support Tickets</a>
             <a class="nav-item" onclick="switchTab('livechat', this)">💬 Live Chat Hub</a>
         </div>
@@ -84,16 +88,17 @@
             
             <div id="dashboard" class="tab-content active">
                 <div class="stats-grid">
-                    <div class="stat-card"><h3>Total Funds Raised</h3><h1 id="s_amount">₹0</h1></div>
-                    <div class="stat-card" style="border-left-color: var(--success);"><h3>Total Donors</h3><h1 id="s_donors">0</h1></div>
+                    <div class="stat-card"><h3>Total Approved Funds</h3><h1 id="s_amount">₹0</h1></div>
+                    <div class="stat-card" style="border-left-color: var(--success);"><h3>Approved Donors</h3><h1 id="s_donors">0</h1></div>
                     <div class="stat-card" style="border-left-color: #f59e0b;"><h3>Pending Tickets</h3><h1 id="s_open_tickets">0</h1></div>
                     <div class="stat-card" style="border-left-color: #8b5cf6;"><h3>Total Tickets</h3><h1 id="s_total_tickets">0</h1></div>
                 </div>
                 <div class="card">
-                    <div class="card-header"><h3>Quick Add Manual Donation</h3></div>
+                    <div class="card-header"><h3>Quick Add Manual Donation (Auto-Approved)</h3></div>
                     <form id="manualForm" class="form-row">
                         <input type="text" id="m_name" placeholder="Donor Name" required>
-                        <input type="email" id="m_email" placeholder="Email Address">
+                        <input type="tel" id="m_mobile" placeholder="Mobile">
+                        <input type="email" id="m_email" placeholder="Email">
                         <input type="number" id="m_amount" placeholder="Amount (₹)" required>
                         <button type="submit" class="btn btn-success">Add Record</button>
                     </form>
@@ -103,7 +108,7 @@
             <div id="donations" class="tab-content">
                 <div class="card">
                     <div class="card-header">
-                        <h3>Donations Database</h3>
+                        <h3>Donations Database (Pending & Approved)</h3>
                         <div style="display: flex; gap: 10px;">
                             <input type="text" id="searchDonations" class="search-bar" placeholder="Search by name..." onkeyup="filterDonations()">
                             <a href="/admin/export_donations" class="btn btn-success" target="_blank">📥 Export CSV</a>
@@ -111,7 +116,7 @@
                     </div>
                     <div style="overflow-x: auto;">
                         <table id="donationsTable">
-                            <thead><tr><th>ID</th><th>Donor Info</th><th>Amount</th><th>Date</th><th>Payment ID</th><th>Action</th></tr></thead>
+                            <thead><tr><th>ID</th><th>Donor Info</th><th>Amount</th><th>Status</th><th>Date</th><th>Action</th></tr></thead>
                             <tbody id="allDonationsBody"></tbody>
                         </table>
                     </div>
@@ -156,7 +161,7 @@
 
         let currentAdminSessionId = null;
         let adminChatPoll;
-        let adminLoadedMessageCount = 0; // BUG FIX: Track message count
+        let adminLoadedMessageCount = 0;
 
         function switchTab(tabId, element) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
@@ -176,9 +181,14 @@
 
             document.getElementById('manualForm').addEventListener('submit', async (e) => {
                 e.preventDefault();
-                const data = { name: document.getElementById('m_name').value, email: document.getElementById('m_email').value, amount: document.getElementById('m_amount').value };
+                const data = { 
+                    name: document.getElementById('m_name').value, 
+                    mobile: document.getElementById('m_mobile').value,
+                    email: document.getElementById('m_email').value, 
+                    amount: document.getElementById('m_amount').value 
+                };
                 await fetch('/admin/api/add_manual', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data) });
-                alert('Manual donation added!'); document.getElementById('manualForm').reset(); loadStats(); loadAllDonations();
+                alert('Manual donation added and approved!'); document.getElementById('manualForm').reset(); loadStats(); loadAllDonations();
             });
         });
 
@@ -188,12 +198,47 @@
             document.getElementById('s_donors').innerText = data.total_donors; document.getElementById('s_open_tickets').innerText = data.open_tickets; document.getElementById('s_total_tickets').innerText = data.total_tickets;
         }
 
+        // --- UPDATED ADMIN DONATIONS LOGIC WITH APPROVAL ---
         async function loadAllDonations() {
             const res = await fetch('/admin/api/all_donations'); const data = await res.json();
             const tbody = document.getElementById('allDonationsBody'); tbody.innerHTML = '';
-            data.forEach(d => { tbody.innerHTML += `<tr><td>#${d.id}</td><td><strong>${d.name}</strong><br><small style="color:#6b7280;">${d.email || 'N/A'}</small></td><td style="color:var(--success); font-weight:bold;">₹${d.amount.toLocaleString('en-IN')}</td><td>${new Date(d.date).toLocaleDateString()}</td><td><small style="background:#f3f4f6; padding:3px 6px; border-radius:4px;">${d.payment_id || 'N/A'}</small></td><td><button class="btn btn-danger" style="padding:5px 10px;" onclick="deleteDonation(${d.id})">Delete</button></td></tr>`; });
+            data.forEach(d => { 
+                let badgeClass = d.status === 'approved' ? 'approved' : 'pending';
+                let badgeText = d.status === 'approved' ? 'Approved' : 'Pending';
+                
+                let approveBtn = d.status === 'pending' 
+                    ? `<button class="btn btn-warning" style="padding:5px 10px; margin-right:5px;" onclick="approveDonation(${d.id})">Approve</button>` 
+                    : '';
+
+                tbody.innerHTML += `
+                    <tr style="${d.status === 'pending' ? 'background: #fffbeb;' : ''}">
+                        <td>#${d.id}</td>
+                        <td>
+                            <strong>${d.name}</strong><br>
+                            <small style="color:#6b7280;">📱 ${d.mobile || 'N/A'} | ✉️ ${d.email || 'N/A'}</small>
+                        </td>
+                        <td style="color:var(--success); font-weight:bold;">₹${d.amount.toLocaleString('en-IN')}</td>
+                        <td><span class="badge ${badgeClass}">${badgeText}</span></td>
+                        <td>${new Date(d.date).toLocaleDateString()}</td>
+                        <td>
+                            ${approveBtn}
+                            <button class="btn btn-danger" style="padding:5px 10px;" onclick="deleteDonation(${d.id})">Delete</button>
+                        </td>
+                    </tr>`; 
+            });
         }
-        async function deleteDonation(id) { if(confirm('Delete this record?')) { await fetch(`/admin/api/delete_donation/${id}`, { method: 'POST' }); loadAllDonations(); loadStats(); } }
+        
+        async function approveDonation(id) {
+            if(confirm('Approve this donation to display it on the public leaderboard?')) {
+                await fetch(`/admin/api/approve_donation/${id}`, { method: 'POST' }); 
+                loadAllDonations(); loadStats(); 
+            }
+        }
+
+        async function deleteDonation(id) { 
+            if(confirm('Delete this record?')) { await fetch(`/admin/api/delete_donation/${id}`, { method: 'POST' }); loadAllDonations(); loadStats(); } 
+        }
+
         function filterDonations() { let input = document.getElementById("searchDonations").value.toLowerCase(); let rows = document.getElementById("allDonationsBody").getElementsByTagName("tr"); for (let i = 0; i < rows.length; i++) { let col = rows[i].getElementsByTagName("td")[1]; if (col) { rows[i].style.display = (col.textContent || col.innerText).toLowerCase().indexOf(input) > -1 ? "" : "none"; } } }
 
         async function loadTickets() {
@@ -208,7 +253,6 @@
         async function resolveTicket(id) { if(confirm('Mark as resolved?')) { await fetch(`/admin/api/tickets/${id}/resolve`, {method: 'POST'}); loadTickets(); loadStats(); } }
         async function deleteTicket(id) { if(confirm('Delete permanently?')) { await fetch(`/admin/api/tickets/${id}/delete`, {method: 'POST'}); loadTickets(); loadStats(); } }
 
-        // --- BUG-FREE ADMIN CHAT LOGIC ---
         async function loadActiveChats() {
             const res = await fetch('/admin/api/chats/active'); const chats = await res.json();
             const list = document.getElementById('activeChatList'); list.innerHTML = '';
@@ -221,8 +265,8 @@
 
         function openAdminChat(sessionId, name) {
             currentAdminSessionId = sessionId;
-            adminLoadedMessageCount = 0; // Reset count for new chat
-            document.getElementById('adminChatBody').innerHTML = ''; // Clear board
+            adminLoadedMessageCount = 0; 
+            document.getElementById('adminChatBody').innerHTML = ''; 
             
             document.getElementById('adminChatHeader').innerText = `Chatting with: ${name}`;
             document.getElementById('adminChatInput').disabled = false;
@@ -260,7 +304,6 @@
             if(!text || !currentAdminSessionId) return;
             input.value = '';
             
-            // Optimistic Update
             document.getElementById('adminChatBody').innerHTML += `<div style="max-width: 75%; padding: 10px 15px; border-radius: 10px; margin-top: 15px; margin-bottom: 5px; border: 1px solid #ddd; position: relative; align-self: flex-end; background: var(--primary); color: white;">
                 <span style="font-size: 0.7rem; font-weight: bold; position: absolute; top: -18px; color: #777; left: 5px;">👨‍💻 You (Support)</span>${text}</div>`;
             document.getElementById('adminChatBody').scrollTop = document.getElementById('adminChatBody').scrollHeight;
