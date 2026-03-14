@@ -94,6 +94,7 @@
         /* LIVE CHAT WIDGET */
         .chat-widget { position: fixed; bottom: 30px; right: 30px; z-index: 9999; }
         .chat-bubble { width: 60px; height: 60px; background: var(--primary); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: white; font-size: 1.5rem; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.2); transition: 0.3s; }
+        .chat-bubble:hover { transform: scale(1.1); }
         .chat-window { display: none; width: 350px; height: 500px; background: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); flex-direction: column; overflow: hidden; position: absolute; bottom: 80px; right: 0; }
         .chat-header { background: var(--primary); color: white; padding: 15px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
         .chat-close { cursor: pointer; font-size: 1.2rem; padding: 5px; }
@@ -214,7 +215,12 @@
 
         <section id="donate" class="glass-card fade-up" style="border: 2px solid var(--primary);">
             <h2 class="section-title">Submit <span>Donation Details</span></h2>
-            <p style="text-align: center; margin-bottom: 25px; color: #555;"><strong>Step 1:</strong> Pay via our secure payment link. <br><strong>Step 2:</strong> Enter your exact Transaction ID below so we can verify your payment.</p>
+            
+            <div style="background: #fffbeb; border: 1px solid #fcd34d; border-left: 5px solid #f59e0b; padding: 15px 20px; border-radius: 8px; margin-bottom: 25px; text-align: left; color: #b45309; font-size: 0.95rem; line-height: 1.6; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
+                <strong style="color: #92400e; font-size: 1.05rem;">⚠️ Important Instructions:</strong><br>
+                <span style="display: inline-block; margin-top: 5px;"><strong>Step 1:</strong> Click the button below to pay via our secure payment link.</span><br>
+                <span style="display: inline-block; margin-top: 5px;"><strong>Step 2:</strong> After paying, copy your exact <strong>Transaction ID / UPI Ref No.</strong> and paste it into the form below so we can manually verify your donation.</span>
+            </div>
             
             <div style="text-align: center; margin-bottom: 30px;">
                 <a href="https://razorpay.me/@byashish" target="_blank" class="btn" style="font-size: 1.1rem; padding: 15px 40px; background: var(--secondary); color: var(--dark);">1. Click Here to Pay First</a>
@@ -240,7 +246,7 @@
                     <input type="number" id="d_amount" required placeholder="e.g. 100" min="5">
                 </div>
                 
-                <div class="form-group" style="grid-column: span 2;">
+                <div class="form-group" style="display: flex; flex-direction: column; justify-content: flex-end; grid-column: span 2;">
                     <div class="checkbox-container">
                         <input type="checkbox" id="verifyCheck" onchange="toggleSubmitButton()">
                         <label for="verifyCheck">I confirm that I have made the payment successfully and the Transaction ID entered above is 100% correct. I understand fake claims will be deleted.</label>
