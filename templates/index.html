@@ -10,13 +10,20 @@
         :root { --primary: #4A90E2; --secondary: #50E3C2; --dark: #1f2937; --light: #f9fafb; --text: #333; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; scroll-behavior: smooth; }
         body { background: #f0f4f8; color: var(--text); overflow-x: hidden; width: 100%; }
+        
+        /* BILINGUAL CSS LOGIC */
+        body.lang-hi .en { display: none !important; }
+        body.lang-hi .hi { display: inline-block !important; }
+        body:not(.lang-hi) .hi { display: none !important; }
+        body:not(.lang-hi) .en { display: inline-block !important; }
+
         .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
         h2.section-title { text-align: center; color: var(--dark); font-size: 2.5rem; margin-bottom: 30px; }
         h2.section-title span { color: var(--primary); }
         
         nav { background: white; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
         .logo { font-size: 1.5rem; font-weight: 700; color: var(--primary); text-decoration: none; }
-        .nav-links { list-style: none; display: flex; gap: 20px; transition: 0.3s; }
+        .nav-links { list-style: none; display: flex; gap: 20px; align-items: center; transition: 0.3s; }
         .nav-links a { text-decoration: none; color: var(--dark); font-weight: 600; }
         .nav-links a:hover { color: var(--primary); }
         .menu-toggle { display: none; font-size: 1.5rem; cursor: pointer; }
@@ -40,7 +47,6 @@
         
         .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
         .btn-outline:hover { background: var(--primary); color: white; }
-        .trust-badges { margin-top: 30px; font-size: 0.9rem; color: #ddd; display: flex; gap: 15px; align-items: center; flex-wrap: wrap; justify-content: center; }
 
         .marquee-wrapper { background: var(--dark); overflow: hidden; padding: 15px 0; color: white; display: flex; white-space: nowrap; }
         .marquee-content { display: inline-block; animation: marquee 20s linear infinite; font-weight: 600; font-size: 1.1rem; }
@@ -51,23 +57,13 @@
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
         
         .mission-vision-box { background: white; padding: 25px; border-radius: 10px; border-left: 5px solid var(--primary); box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        .mission-vision-box h3 { color: var(--dark); margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
         .about-image { width: 100%; height: 100%; object-fit: cover; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
 
         .form-group { margin-bottom: 20px; width: 100%; }
         .form-group label { display: block; margin-bottom: 8px; font-weight: 600; }
         .form-group input[type="text"], .form-group input[type="tel"], .form-group input[type="email"], .form-group input[type="number"], .form-group textarea { 
-            width: 100%; 
-            padding: 15px; 
-            border: 1px solid #ddd; 
-            border-radius: 8px; 
-            outline: none; 
-            transition: 0.3s; 
-            font-size: 16px !important; 
-            background: #fff;
-            -webkit-appearance: none; 
+            width: 100%; padding: 15px; border: 1px solid #ddd; border-radius: 8px; outline: none; transition: 0.3s; font-size: 16px !important; background: #fff; -webkit-appearance: none; 
         }
-        .form-group input:focus { border-color: var(--primary); box-shadow: 0 0 5px rgba(74, 144, 226, 0.3); }
         
         .checkbox-container { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 20px; background: #fffbeb; padding: 15px; border-radius: 8px; border: 1px solid #fcd34d; }
         .checkbox-container input[type="checkbox"] { margin-top: 5px; width: 18px; height: 18px; cursor: pointer; }
@@ -76,10 +72,25 @@
         table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; }
         th, td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
         th { background: var(--primary); color: white; white-space: nowrap; }
+        
+        /* Badges */
+        .donor-badge { display: inline-block; padding: 3px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; margin-left: 8px; color: #000; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .badge-gold { background: linear-gradient(135deg, #ffd700, #ffb300); }
+        .badge-silver { background: linear-gradient(135deg, #e0e0e0, #9e9e9e); }
+        .badge-bronze { background: linear-gradient(135deg, #ffbca8, #cd7f32); }
 
         .gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; }
         .gallery img { width: 100%; height: 250px; object-fit: cover; border-radius: 10px; transition: transform 0.4s; cursor: pointer; }
         .gallery img:hover { transform: scale(1.03); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+
+        /* Success Stories Dynamic Grid */
+        .story-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .story-card { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 8px 20px rgba(0,0,0,0.05); border: 1px solid #eee; transition: 0.3s; }
+        .story-card:hover { transform: translateY(-5px); box-shadow: 0 12px 30px rgba(0,0,0,0.1); }
+        .story-img { width: 100%; height: 200px; object-fit: cover; }
+        .story-body { padding: 20px; }
+        .story-title { font-size: 1.2rem; color: var(--primary); margin-bottom: 10px; font-weight: bold; }
+        .story-text { color: #555; font-size: 0.95rem; line-height: 1.6; }
 
         .faq-item { border-bottom: 1px solid #ddd; padding: 15px 0; }
         .faq-question { font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; color: var(--dark); }
@@ -87,14 +98,12 @@
 
         .toast { position: fixed; bottom: -100px; left: 20px; background: white; color: var(--dark); padding: 15px 25px; border-radius: 50px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border-left: 5px solid var(--secondary); display: flex; align-items: center; gap: 10px; transition: bottom 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); z-index: 9999; font-weight: 600; font-size: 0.9rem; max-width: 90vw; }
         .toast.show { bottom: 30px; }
-        .toast span.amount { color: var(--primary); font-size: 1.1rem; }
         
         footer { background: var(--dark); color: white; padding: 50px 20px 20px; text-align: center; }
 
         /* LIVE CHAT WIDGET */
         .chat-widget { position: fixed; bottom: 30px; right: 30px; z-index: 9999; }
         .chat-bubble { width: 60px; height: 60px; background: var(--primary); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: white; font-size: 1.5rem; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.2); transition: 0.3s; }
-        .chat-bubble:hover { transform: scale(1.1); }
         .chat-window { display: none; width: 350px; height: 500px; background: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); flex-direction: column; overflow: hidden; position: absolute; bottom: 80px; right: 0; }
         .chat-header { background: var(--primary); color: white; padding: 15px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
         .chat-close { cursor: pointer; font-size: 1.2rem; padding: 5px; }
@@ -102,18 +111,15 @@
         .chat-footer { padding: 15px; border-top: 1px solid #eee; display: flex; gap: 10px; background: white; }
         .chat-input { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 20px; outline: none; font-size: 16px !important; }
         .chat-send { background: var(--primary); color: white; border: none; padding: 10px 15px; border-radius: 20px; cursor: pointer; }
-        
         .msg { max-width: 85%; padding: 10px 15px; border-radius: 15px; font-size: 0.9rem; line-height: 1.4; position: relative; margin-top: 15px; animation: fadeIn 0.3s ease-in; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
         .msg-label { font-size: 0.7rem; font-weight: bold; position: absolute; top: -18px; color: #777; white-space: nowrap; }
-        
         .msg.admin { background: #d1fae5; color: #065f46; align-self: flex-start; border-bottom-left-radius: 2px; }
         .msg.admin .msg-label { left: 5px; }
         .msg.bot { background: #e0e7ff; color: #3730a3; align-self: flex-start; border-bottom-left-radius: 2px; }
         .msg.bot .msg-label { left: 5px; }
         .msg.user { background: var(--primary); color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
         .msg.user .msg-label { right: 5px; color: var(--primary); }
-
         #chatStartForm { padding: 20px; display: flex; flex-direction: column; gap: 15px; justify-content: center; height: 100%; }
         #chatUi { display: none; flex-direction: column; height: 100%; }
 
@@ -122,44 +128,53 @@
             .menu-toggle { display: block; }
             .nav-links { display: none; flex-direction: column; position: absolute; top: 60px; left: 0; width: 100%; background: white; padding: 20px; box-shadow: 0 5px 10px rgba(0,0,0,0.1); }
             .nav-links.active { display: flex; }
-            
             .hero-banner h1 { font-size: 2.2rem; }
             .container { padding: 0 15px; }
             .glass-card { padding: 20px; }
             h2.section-title { font-size: 2rem; }
-            
             .grid-2 { display: flex; flex-direction: column; gap: 20px; }
             .form-group[style*="grid-column: span 2"] { grid-column: auto !important; }
-            
             .chat-widget { bottom: 15px; right: 15px; }
             .chat-window { width: calc(100vw - 30px); right: 0; bottom: 70px; height: 60vh; }
-            
             .toast { left: 15px; right: 15px; bottom: -100px; justify-content: center; text-align: center; }
         }
     </style>
 </head>
 <body>
 
+    <canvas id="certCanvas" style="display:none;"></canvas>
+
     <nav>
         <a href="#" class="logo">HopeFoundation.</a>
         <div class="menu-toggle" onclick="toggleMenu()">☰</div>
         <ul class="nav-links" id="navLinks">
-            <li><a href="#about" onclick="toggleMenu()">About Us</a></li>
-            <li><a href="#gallery" onclick="toggleMenu()">Impact Gallery</a></li>
-            <li><a href="#leaderboard" onclick="toggleMenu()">Wall of Heroes</a></li>
-            <li><a href="#faq" onclick="toggleMenu()">FAQ & Support</a></li>
+            <li><a href="#about" onclick="toggleMenu()"><span class="en">About Us</span><span class="hi">हमारे बारे में</span></a></li>
+            <li><a href="#stories" onclick="toggleMenu()"><span class="en">Stories</span><span class="hi">कहानियां</span></a></li>
+            <li><a href="#leaderboard" onclick="toggleMenu()"><span class="en">Wall of Heroes</span><span class="hi">दानवीरों की सूची</span></a></li>
+            <li><a href="#faq" onclick="toggleMenu()"><span class="en">FAQ</span><span class="hi">सामान्य प्रश्न</span></a></li>
+            <li><button onclick="toggleLanguage()" class="btn-outline" style="padding: 5px 12px; border-radius: 15px; cursor: pointer; border: 1px solid var(--primary); background: transparent; font-weight: bold; color: var(--primary);">🌐 English / हिंदी</button></li>
         </ul>
-        <a href="#donate" class="btn" style="padding: 8px 20px;">Donate Now</a>
+        <a href="#donate" class="btn" style="padding: 8px 20px;"><span class="en">Donate Now</span><span class="hi">अभी दान करें</span></a>
     </nav>
 
     <header class="hero-banner">
-        <h1>Empower a Specially-Abled Child's Future ❤️</h1>
-        <p style="font-size: 1.2rem; max-width: 700px; margin: 0 auto;">Join thousands of Indians providing education, medical aid, and specialized care to the children who need it most across our nation.</p>
+        <h1>
+            <span class="en">Empower a Specially-Abled Child's Future ❤️</span>
+            <span class="hi">एक विशेष-योग्य बच्चे के भविष्य को सशक्त बनाएं ❤️</span>
+        </h1>
+        <p style="font-size: 1.2rem; max-width: 700px; margin: 0 auto;">
+            <span class="en">Join thousands of Indians providing education, medical aid, and specialized care to the children who need it most across our nation.</span>
+            <span class="hi">भारत भर में उन बच्चों को शिक्षा और चिकित्सा सहायता प्रदान करने वाले हजारों भारतीयों से जुड़ें जिन्हें इसकी सबसे ज्यादा जरूरत है।</span>
+        </p>
         <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; margin-top: 30px;">
-            <a href="#donate" class="btn" style="font-size: 1.2rem; padding: 15px 40px; background: var(--secondary); color: var(--dark);">Make a Donation</a>
+            <a href="#donate" class="btn" style="font-size: 1.2rem; padding: 15px 40px; background: var(--secondary); color: var(--dark);">
+                <span class="en">Make a Donation</span><span class="hi">दान करें</span>
+            </a>
         </div>
         <div class="trust-badges">
-            <span>🔒 100% Secure Payments</span> | <span>✅ Government Verified NGO</span> | <span>🧾 80G Tax Exemption Available</span>
+            <span>🔒 <span class="en">Secure Payments</span><span class="hi">सुरक्षित भुगतान</span></span> | 
+            <span>✅ <span class="en">Verified NGO</span><span class="hi">सत्यापित एनजीओ</span></span> | 
+            <span>🧾 <span class="en">80G Tax Exemption</span><span class="hi">80G कर छूट</span></span>
         </div>
     </header>
 
@@ -175,19 +190,19 @@
     <div class="container">
         
         <section id="about" class="fade-up" style="margin-bottom: 60px;">
-            <h2 class="section-title">About <span>Hope Foundation</span></h2>
+            <h2 class="section-title"><span class="en">About</span><span class="hi">हमारे बारे में</span> <span>Hope Foundation</span></h2>
             <div class="grid-2" style="align-items: stretch;">
                 <div style="display: flex; flex-direction: column; justify-content: center;">
                     <p style="line-height: 1.8; color: #555; margin-bottom: 20px; font-size: 1.05rem;">
-                        In India, millions of specially-abled children lack access to basic educational and physical infrastructure. <strong>Hope Foundation</strong> was created to bridge this gap. We believe that physical limitations should never limit a child's dreams. 
+                        <span class="en">In India, millions of specially-abled children lack access to basic educational and physical infrastructure. <strong>Hope Foundation</strong> was created to bridge this gap.</span>
+                        <span class="hi">भारत में, लाखों विशेष रूप से सक्षम बच्चों के पास बुनियादी शैक्षिक ढांचे का अभाव है। <strong>होप फाउंडेशन</strong> को इस अंतर को पाटने के लिए बनाया गया था।</span>
                     </p>
                     <div class="mission-vision-box">
-                        <h3>🎯 Our Mission</h3>
-                        <p style="color: #666; font-size: 0.95rem;">To provide high-quality medical equipment, life-changing physical therapy, and inclusive classroom environments to specially-abled children across rural and urban India.</p>
-                    </div>
-                    <div class="mission-vision-box" style="border-left-color: var(--secondary);">
-                        <h3>👁️ Our Vision</h3>
-                        <p style="color: #666; font-size: 0.95rem;">An India where every child, regardless of their physical or cognitive abilities, is treated with dignity and given the exact tools they need to succeed and become independent.</p>
+                        <h3>🎯 <span class="en">Our Mission</span><span class="hi">हमारा मिशन</span></h3>
+                        <p style="color: #666; font-size: 0.95rem;">
+                            <span class="en">To provide high-quality medical equipment, life-changing physical therapy, and inclusive classroom environments to specially-abled children.</span>
+                            <span class="hi">विशेष रूप से सक्षम बच्चों को उच्च गुणवत्ता वाले चिकित्सा उपकरण, और समावेशी कक्षा का वातावरण प्रदान करना।</span>
+                        </p>
                     </div>
                 </div>
                 <div>
@@ -196,111 +211,96 @@
             </div>
         </section>
 
-        <section class="glass-card text-center fade-up" style="background: linear-gradient(135deg, #e0f2fe 0%, #d1fae5 100%); border: none;">
-            <h2 style="color: var(--dark);">Our Collective Impact</h2>
-            <h1 style="font-size: 3.5rem; color: var(--primary); margin: 10px 0;">₹<span id="totalAmount">0</span></h1>
-            <p style="font-size: 1.2rem;">Raised with the love of <span id="totalDonors" style="font-weight:bold; color: var(--dark);">0</span> generous donors</p>
+        <section id="stories" class="fade-up" style="margin-bottom: 60px;">
+            <h2 class="section-title"><span class="en">Impact</span><span class="hi">प्रभाव</span> <span><span class="en">Stories</span><span class="hi">की कहानियाँ</span></span></h2>
+            <p style="text-align: center; color: #666; margin-bottom: 30px; max-width: 700px; margin-inline: auto;">
+                <span class="en">See the real lives that your donations are changing across India.</span>
+                <span class="hi">उन वास्तविक जीवन को देखें जिन्हें आपका दान बदल रहा है।</span>
+            </p>
+            <div id="storiesContainer" class="story-grid">
+                </div>
         </section>
 
         <section id="gallery" class="fade-up" style="margin-bottom: 60px;">
-            <h2 class="section-title">Where Your <span>Money Goes</span></h2>
-            <p style="text-align: center; color: #666; margin-bottom: 30px; max-width: 700px; margin-inline: auto;">Every rupee contributed goes directly into funding wheelchairs, braille books, hearing aids, and specialized tutors in Indian schools.</p>
+            <h2 class="section-title"><span class="en">Where Your</span><span class="hi">आपका</span> <span><span class="en">Money Goes</span><span class="hi">पैसा कहाँ जाता है</span></span></h2>
             <div class="gallery">
                 <img src="https://www.sharing4good.org/sites/default/files/styles/article_image/public/field/image/DSC_3664.JPG" alt="World Disabled Day - Indian Family">
-                <img src="https://www.google.com/imgres?q=specl%20child%20development&imgurl=https%3A%2F%2Fwww.teachearlyyears.com%2Fimages%2Fmade%2Fimages%2Fuploads%2Farticle%2FChildrens_speech_development_630_465_int_s_c1.png&imgrefurl=https%3A%2F%2Fwww.teachearlyyears.com%2Fa-unique-child%2Fview%2Fsupporting-childrens-speech&docid=66x6hOjnPHhEtM&tbnid=LE8oLio-UdN-jM&vet=12ahUKEwiE6Yuw6J-TAxWP-TgGHc9cNGkQnPAOegQIGhAB..i&w=630&h=465&hcb=2&ved=2ahUKEwiE6Yuw6J-TAxWP-TgGHc9cNGkQnPAOegQIGhAB" alt="Special Needs Children Support Programs India">
+                <img src="https://www.skynettechnologies.com/sites/default/files/special-needs-children-support-programs-india.jpg" alt="Special Needs Children Support Programs India">
                 <img src="https://images.livemint.com/img/2021/12/07/original/India-International-Day-of-Persons-with-Disabilities-9_1638887870401.jpg" alt="Persons with Disabilities India">
                 <img src="https://www.shutterstock.com/image-photo/happy-young-brother-playing-his-260nw-2173952411.jpg" alt="Happy Young Brother Playing">
             </div>
         </section>
 
         <section id="donate" class="glass-card fade-up" style="border: 2px solid var(--primary);">
-            <h2 class="section-title">Submit <span>Donation Details</span></h2>
+            <h2 class="section-title"><span class="en">Submit</span><span class="hi">जमा करें</span> <span><span class="en">Donation Details</span><span class="hi">दान विवरण</span></span></h2>
             
             <div style="background: #fffbeb; border: 1px solid #fcd34d; border-left: 5px solid #f59e0b; padding: 15px 20px; border-radius: 8px; margin-bottom: 25px; text-align: left; color: #b45309; font-size: 0.95rem; line-height: 1.6; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
-                <strong style="color: #92400e; font-size: 1.05rem;">⚠️ Important Instructions:</strong><br>
-                <span style="display: inline-block; margin-top: 5px;"><strong>Step 1:</strong> Click the button below to pay via our secure payment link.</span><br>
-                <span style="display: inline-block; margin-top: 5px;"><strong>Step 2:</strong> After paying, copy your exact <strong>Transaction ID / UPI Ref No.</strong> and paste it into the form below so we can manually verify your donation.</span>
+                <strong style="color: #92400e; font-size: 1.05rem;">⚠️ <span class="en">Important Instructions:</span><span class="hi">महत्वपूर्ण निर्देश:</span></strong><br>
+                <span style="display: inline-block; margin-top: 5px;"><strong>Step 1:</strong> <span class="en">Click the button below to pay securely.</span><span class="hi">सुरक्षित रूप से भुगतान करने के लिए नीचे दिए गए बटन पर क्लिक करें।</span></span><br>
+                <span style="display: inline-block; margin-top: 5px;"><strong>Step 2:</strong> <span class="en">Copy your exact <strong>Transaction ID / UPI Ref No.</strong> and paste it below.</span><span class="hi">भुगतान करने के बाद, अपना <strong>ट्रांजेक्शन आईडी</strong> कॉपी करें और इसे नीचे पेस्ट करें।</span></span>
             </div>
             
             <div style="text-align: center; margin-bottom: 30px;">
-                <a href="https://razorpay.me/@byashish" target="_blank" class="btn" style="font-size: 1.1rem; padding: 15px 40px; background: var(--secondary); color: var(--dark);">1. Click Here to Pay First</a>
+                <a href="https://razorpay.me/@byashish" target="_blank" class="btn" style="font-size: 1.1rem; padding: 15px 40px; background: var(--secondary); color: var(--dark);">
+                    1. <span class="en">Click Here to Pay First</span><span class="hi">पहले भुगतान करने के लिए यहां क्लिक करें</span>
+                </a>
             </div>
 
             <form id="paymentForm" class="grid-2">
                 <div class="form-group">
-                    <label>Full Name *</label>
-                    <input type="text" id="d_name" required placeholder="Your Name">
+                    <label><span class="en">Full Name</span><span class="hi">पूरा नाम</span> *</label>
+                    <input type="text" id="d_name" required placeholder="...">
                 </div>
                 <div class="form-group">
-                    <label>Mobile Number *</label>
+                    <label><span class="en">Mobile Number</span><span class="hi">मोबाइल नंबर</span> *</label>
                     <input type="tel" id="d_mobile" required placeholder="e.g. 9876543210">
                 </div>
                 
                 <div class="form-group">
-                    <label>Transaction ID / UPI Ref No. * <span style="font-weight: normal; color: #e74c3c; font-size: 0.85rem;">(Required for verification)</span></label>
-                    <input type="text" id="d_txn_id" required placeholder="e.g. pay_XXXXXX or 123456789012">
+                    <label><span class="en">Transaction ID / UPI Ref No.</span><span class="hi">ट्रांजेक्शन आईडी</span> *</label>
+                    <input type="text" id="d_txn_id" required placeholder="pay_XXXXXX or 123456789012">
                 </div>
 
                 <div class="form-group">
-                    <label>Amount Paid (₹) * <span style="font-weight: normal; color: #888; font-size: 0.85rem;">(Minimum ₹5)</span></label>
-                    <input type="number" id="d_amount" required placeholder="e.g. 100" min="5">
+                    <label><span class="en">Amount Paid (₹)</span><span class="hi">दान राशि (₹)</span> *</label>
+                    <input type="number" id="d_amount" required placeholder="100" min="5">
                 </div>
                 
                 <div class="form-group" style="display: flex; flex-direction: column; justify-content: flex-end; grid-column: span 2;">
                     <div class="checkbox-container">
                         <input type="checkbox" id="verifyCheck" onchange="toggleSubmitButton()">
-                        <label for="verifyCheck">I confirm that I have made the payment successfully and the Transaction ID entered above is 100% correct. I understand fake claims will be deleted.</label>
+                        <label for="verifyCheck">
+                            <span class="en">I confirm I have made the payment and the Transaction ID is 100% correct.</span>
+                            <span class="hi">मैं पुष्टि करता हूं कि मैंने भुगतान कर दिया है और ट्रांजेक्शन आईडी 100% सही है।</span>
+                        </label>
                     </div>
                     
-                    <button type="submit" class="btn" id="payBtn" disabled style="width: 100%; height: 50px; font-size: 1.1rem;">2. Submit Payment Details</button>
+                    <button type="submit" class="btn" id="payBtn" disabled style="width: 100%; height: 50px; font-size: 1.1rem;">
+                        2. <span class="en">Submit Details</span><span class="hi">विवरण जमा करें</span>
+                    </button>
                 </div>
             </form>
             <p id="payStatus" style="text-align: center; margin-top: 15px; font-weight: bold;"></p>
         </section>
 
         <section id="leaderboard" class="glass-card fade-up">
-            <h2 class="section-title">Wall of <span>Heroes</span></h2>
+            <h2 class="section-title"><span class="en">Wall of</span><span class="hi">दानवीरों की</span> <span><span class="en">Heroes</span><span class="hi">सूची</span></span></h2>
             <div style="overflow-x: auto; padding-bottom: 10px;">
                 <table>
-                    <thead><tr><th>Rank</th><th>Donor Name</th><th>Amount</th><th>Date</th></tr></thead>
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Donor Name</th>
+                            <th>Amount</th>
+                            <th>Date</th>
+                            <th>Share Impact</th>
+                        </tr>
+                    </thead>
                     <tbody id="leaderboardBody"></tbody>
                 </table>
             </div>
         </section>
 
-        <div class="grid-2 fade-up" id="faq">
-            <section class="glass-card">
-                <h2>Frequently Asked Questions</h2>
-                <div class="faq-item">
-                    <div class="faq-question" onclick="toggleFaq(this)">Can I donate just ₹5? <span>+</span></div>
-                    <div class="faq-answer">Absolutely! Every single rupee counts. Micro-donations pool together to create massive impact for these children.</div>
-                </div>
-                <div class="faq-item">
-                    <div class="faq-question" onclick="toggleFaq(this)">Is my donation tax-deductible under 80G? <span>+</span></div>
-                    <div class="faq-answer">Yes, all donations are 80G tax-exempt. You will automatically receive a receipt on your registered email address if provided.</div>
-                </div>
-                <div class="faq-item">
-                    <div class="faq-question" onclick="toggleFaq(this)">How do I get on the leaderboard? <span>+</span></div>
-                    <div class="faq-answer">Simply click the payment link, complete your payment, and fill out the details form with your Transaction ID. Once our team verifies the payment against our bank records, you will be added instantly!</div>
-                </div>
-            </section>
-            
-            <section class="glass-card">
-                <h2>Need Help? Open a Ticket</h2>
-                <form id="ticketForm">
-                    <div class="form-group"><input type="text" id="t_name" required placeholder="Name"></div>
-                    <div class="form-group"><input type="email" id="t_email" required placeholder="Email"></div>
-                    <div class="form-group"><input type="text" id="t_subject" required placeholder="Subject"></div>
-                    <div class="form-group"><textarea id="t_message" rows="3" required placeholder="Message..."></textarea></div>
-                    <button type="submit" class="btn" id="ticketBtn" style="width: 100%;">Submit Ticket</button>
-                    <p id="ticketStatus" style="margin-top: 10px; text-align: center;"></p>
-                </form>
-            </section>
-        </div>
-    </div>
-
-    <div id="liveToast" class="toast">
-        🎉 <span id="toastName">Someone</span> just donated <span class="amount" id="toastAmount">₹0</span>!
     </div>
 
     <div class="chat-widget">
@@ -308,15 +308,9 @@
             <div class="chat-header"><span>💬 Support Chat</span><span class="chat-close" onclick="toggleChat()">✖</span></div>
             <form id="chatStartForm">
                 <p style="text-align: center; color: #555;">Enter details to start chatting.</p>
-                <div class="form-group" style="padding: 0 15px;">
-                    <input type="text" id="c_name" required placeholder="Your Name">
-                </div>
-                <div class="form-group" style="padding: 0 15px;">
-                    <input type="email" id="c_email" required placeholder="Your Email">
-                </div>
-                <div style="padding: 0 15px;">
-                    <button type="submit" class="btn" style="width: 100%;">Start Chat</button>
-                </div>
+                <div class="form-group" style="padding: 0 15px;"><input type="text" id="c_name" required placeholder="Your Name"></div>
+                <div class="form-group" style="padding: 0 15px;"><input type="email" id="c_email" required placeholder="Your Email"></div>
+                <div style="padding: 0 15px;"><button type="submit" class="btn" style="width: 100%;">Start Chat</button></div>
             </form>
             <div id="chatUi">
                 <div class="chat-body" id="chatBody"></div>
@@ -336,29 +330,26 @@
     </footer>
 
     <script>
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => { if(entry.isIntersecting) entry.target.classList.add('visible'); });
-        }, { threshold: 0.1 });
+        // Animations
+        const observer = new IntersectionObserver((entries) => { entries.forEach(entry => { if(entry.isIntersecting) entry.target.classList.add('visible'); }); }, { threshold: 0.1 });
         document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
 
+        // Mobile Menu
         function toggleMenu() { document.getElementById('navLinks').classList.toggle('active'); }
-        function toggleFaq(element) {
-            let answer = element.nextElementSibling; let icon = element.querySelector('span');
-            if (answer.style.display === "block") { answer.style.display = "none"; icon.innerText = "+"; } 
-            else { answer.style.display = "block"; icon.innerText = "−"; }
+        
+        // Language Toggle Logic
+        function toggleLanguage() {
+            document.body.classList.toggle('lang-hi');
         }
 
-        // Toggle Submit Button Logic
+        // Form Submit Enable
         function toggleSubmitButton() {
-            const checkbox = document.getElementById('verifyCheck');
-            const submitBtn = document.getElementById('payBtn');
-            submitBtn.disabled = !checkbox.checked;
+            document.getElementById('payBtn').disabled = !document.getElementById('verifyCheck').checked;
         }
 
         document.addEventListener("DOMContentLoaded", () => {
-            fetchStats();
             fetchLeaderboard();
-            startLatestDonorCheck();
+            fetchStories();
 
             document.getElementById('paymentForm').addEventListener('submit', async (e) => {
                 e.preventDefault();
@@ -366,104 +357,151 @@
                 const status = document.getElementById('payStatus');
                 btn.innerText = "Submitting..."; btn.disabled = true;
 
-                // Send the TXN ID in the email field temporarily so you can see it in the DB without changing app.py
                 const txn_data_string = "TXN ID: " + document.getElementById('d_txn_id').value;
 
                 const data = {
                     name: document.getElementById('d_name').value,
                     mobile: document.getElementById('d_mobile').value,
-                    email: txn_data_string, // Saved into the email column so you can see it in Admin panel
+                    email: txn_data_string, 
                     amount: document.getElementById('d_amount').value
                 };
 
                 try {
-                    const res = await fetch('/api/submit_donation', {
-                        method: 'POST',
-                        headers: {'Content-Type': 'application/json'},
-                        body: JSON.stringify(data)
-                    });
+                    const res = await fetch('/api/submit_donation', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data) });
                     const result = await res.json();
-                    
                     if(result.status === 'success'){
                         status.style.color = "green"; 
-                        status.innerText = "Thank you! We will verify your Transaction ID. Once confirmed, you will appear on the leaderboard.";
+                        status.innerText = "Thank you! Pending verification.";
                         document.getElementById('paymentForm').reset();
-                        document.getElementById('verifyCheck').checked = false; // reset checkbox
-                    } else {
-                        status.style.color = "red"; status.innerText = "Error submitting details.";
-                        btn.disabled = false;
-                    }
-                } catch (err) {
-                    status.style.color = "red"; status.innerText = "Network Error.";
-                    btn.disabled = false;
-                } finally {
-                    btn.innerText = "2. Submit Payment Details";
-                }
-            });
-
-            document.getElementById('ticketForm').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const btn = document.getElementById('ticketBtn'); btn.innerText = "Sending..."; btn.disabled = true;
-                const data = { name: document.getElementById('t_name').value, email: document.getElementById('t_email').value, subject: document.getElementById('t_subject').value, message: document.getElementById('t_message').value };
-                const res = await fetch('/api/submit_ticket', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data) });
-                const result = await res.json();
-                const status = document.getElementById('ticketStatus');
-                status.innerText = result.message; status.style.color = result.status === 'success' ? "green" : "red";
-                if(result.status === 'success') document.getElementById('ticketForm').reset();
-                btn.innerText = "Submit Ticket"; btn.disabled = false;
+                        document.getElementById('verifyCheck').checked = false; 
+                    } else { status.style.color = "red"; status.innerText = "Error."; btn.disabled = false; }
+                } catch (err) { status.style.color = "red"; status.innerText = "Error."; btn.disabled = false; } 
+                finally { btn.innerText = "2. Submit Details"; }
             });
         });
 
-        async function fetchStats() {
-            const res = await fetch('/api/stats'); const data = await res.json();
-            document.getElementById('totalAmount').innerText = data.total_amount.toLocaleString('en-IN');
-            document.getElementById('totalDonors').innerText = data.total_donors;
+        // 1. DYNAMIC SUCCESS STORIES FETCH
+        async function fetchStories() {
+            try {
+                const res = await fetch('/api/stories');
+                const stories = await res.json();
+                const container = document.getElementById('storiesContainer');
+                if(stories.length === 0) {
+                    container.innerHTML = '<p style="text-align:center; width:100%; color:#888;">No stories added yet. Check back soon!</p>';
+                    return;
+                }
+                container.innerHTML = '';
+                stories.forEach(s => {
+                    container.innerHTML += `
+                    <div class="story-card">
+                        <img src="${s.image_url}" alt="Story Image" class="story-img">
+                        <div class="story-body">
+                            <div class="story-title">${s.title}</div>
+                            <div class="story-text">${s.content}</div>
+                        </div>
+                    </div>`;
+                });
+            } catch(e) { console.error("Error loading stories"); }
         }
 
+        // 2. LEADERBOARD WITH DONOR BADGES
         async function fetchLeaderboard() {
             const res = await fetch('/api/leaderboard'); const data = await res.json();
             const tbody = document.getElementById('leaderboardBody'); tbody.innerHTML = '';
-            data.forEach((d, i) => { tbody.innerHTML += `<tr><td><strong>#${i + 1}</strong></td><td>${d.name}</td><td style="color:var(--primary);font-weight:bold;">₹${d.amount.toLocaleString('en-IN')}</td><td>${new Date(d.date).toLocaleDateString()}</td></tr>`; });
+            
+            data.forEach((d, i) => { 
+                // BADGE LOGIC
+                let badgeClass = 'badge-bronze'; let badgeIcon = '🥉 Hero';
+                if(d.amount >= 5000) { badgeClass = 'badge-gold'; badgeIcon = '🥇 VIP Gold'; }
+                else if (d.amount >= 1000) { badgeClass = 'badge-silver'; badgeIcon = '🥈 Silver'; }
+
+                tbody.innerHTML += `
+                <tr>
+                    <td><strong>#${i + 1}</strong></td>
+                    <td>
+                        <strong>${d.name}</strong> 
+                        <span class="donor-badge ${badgeClass}">${badgeIcon}</span>
+                    </td>
+                    <td style="color:var(--primary);font-weight:bold;">₹${d.amount.toLocaleString('en-IN')}</td>
+                    <td>${new Date(d.date).toLocaleDateString()}</td>
+                    <td>
+                        <button onclick="generateCertificate('${d.name}', ${d.amount})" class="btn" style="padding: 5px 10px; font-size: 0.8rem; background: var(--secondary); color: var(--dark);">
+                            📸 Share
+                        </button>
+                    </td>
+                </tr>`; 
+            });
         }
 
-        let lastDonationId = null;
-        async function checkLatestDonor() {
-            try {
-                const res = await fetch('/api/latest_donation');
-                const data = await res.json();
-                if(data.id && data.id !== lastDonationId) {
-                    lastDonationId = data.id;
-                    const toast = document.getElementById('liveToast');
-                    document.getElementById('toastName').innerText = data.name;
-                    document.getElementById('toastAmount').innerText = `₹${data.amount.toLocaleString('en-IN')}`;
-                    toast.classList.add('show');
-                    setTimeout(() => { toast.classList.remove('show'); }, 5000);
-                }
-            } catch (e) { console.log(e); }
-        }
-        function startLatestDonorCheck() {
-            checkLatestDonor();
-            setInterval(checkLatestDonor, 10000);
+        // 3. SHARE YOUR IMPACT GENERATOR (Canvas API)
+        function generateCertificate(name, amount) {
+            const canvas = document.getElementById('certCanvas');
+            canvas.width = 1080; canvas.height = 1080; // Square format for Instagram/WhatsApp
+            const ctx = canvas.getContext('2d');
+
+            // Draw Background Gradient
+            let grad = ctx.createLinearGradient(0, 0, 1080, 1080);
+            grad.addColorStop(0, '#1f2937'); // Dark Blue/Grey
+            grad.addColorStop(1, '#4A90E2'); // Primary Blue
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, 1080, 1080);
+
+            // Draw Inner Border
+            ctx.strokeStyle = '#50E3C2';
+            ctx.lineWidth = 15;
+            ctx.strokeRect(40, 40, 1000, 1000);
+
+            // Draw Text Elements
+            ctx.fillStyle = '#ffffff';
+            ctx.textAlign = 'center';
+            
+            ctx.font = 'bold 60px Arial';
+            ctx.fillText('Hope Foundation', 540, 180);
+            
+            ctx.fillStyle = '#50E3C2';
+            ctx.font = 'italic 50px Arial';
+            ctx.fillText('Certificate of Appreciation', 540, 270);
+            
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '40px Arial';
+            ctx.fillText('This is proudly presented to', 540, 450);
+
+            // Name
+            ctx.font = 'bold 90px Arial';
+            ctx.fillStyle = '#ffd700'; // Gold name
+            ctx.fillText(name.toUpperCase(), 540, 570);
+
+            // Amount & Cause
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '40px Arial';
+            ctx.fillText(`For their generous contribution of ₹${amount}`, 540, 700);
+            ctx.fillText('to empower specially-abled children in India.', 540, 760);
+
+            // Footer
+            ctx.font = 'bold 30px Arial';
+            ctx.fillStyle = '#aaaaaa';
+            ctx.fillText('Join the movement at www.hopefoundation.com', 540, 950);
+
+            // Trigger Download
+            const link = document.createElement('a');
+            link.download = `HopeFoundation_Impact_${name}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            alert("Your certificate is downloading! Share it on your WhatsApp Status!");
         }
 
+        // Live Chat Logic
         let chatSessionId = localStorage.getItem('chatSessionId');
-        let chatPollInterval;
-        let loadedMessageCount = 0; 
-
+        let chatPollInterval; let loadedMessageCount = 0; 
         function toggleChat() {
             const win = document.getElementById('chatWindow');
             win.style.display = win.style.display === 'flex' ? 'none' : 'flex';
             if(win.style.display === 'flex' && chatSessionId) {
                 document.getElementById('chatStartForm').style.display = 'none';
                 document.getElementById('chatUi').style.display = 'flex';
-                syncChat();
-                if(!chatPollInterval) chatPollInterval = setInterval(syncChat, 3000);
-            } else {
-                clearInterval(chatPollInterval);
-                chatPollInterval = null;
-            }
+                syncChat(); if(!chatPollInterval) chatPollInterval = setInterval(syncChat, 3000);
+            } else { clearInterval(chatPollInterval); chatPollInterval = null; }
         }
-
         document.getElementById('chatStartForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const data = { name: document.getElementById('c_name').value, email: document.getElementById('c_email').value };
@@ -474,43 +512,30 @@
             document.getElementById('chatUi').style.display = 'flex';
             syncChat(); chatPollInterval = setInterval(syncChat, 3000);
         });
-
         async function syncChat() {
             if(!chatSessionId) return;
-            const res = await fetch(`/api/chat/sync/${chatSessionId}`);
-            const messages = await res.json();
-            
+            const res = await fetch(`/api/chat/sync/${chatSessionId}`); const messages = await res.json();
             if(messages.length > loadedMessageCount) {
-                const body = document.getElementById('chatBody');
-                const newMessages = messages.slice(loadedMessageCount);
-                
+                const body = document.getElementById('chatBody'); const newMessages = messages.slice(loadedMessageCount);
                 newMessages.forEach(m => {
                     let cssClass = '', label = '';
                     if (m.sender === 'user') { cssClass = 'user'; label = '👤 You'; } 
                     else if (m.sender === 'bot') { cssClass = 'bot'; label = '🤖 Assistant'; } 
-                    else { cssClass = 'admin'; label = '👨‍💻 Support Team'; }
-                    
+                    else { cssClass = 'admin'; label = '👨‍💻 Support'; }
                     body.innerHTML += `<div class="msg ${cssClass}"><span class="msg-label">${label}</span>${m.message}</div>`;
                 });
-                body.scrollTop = body.scrollHeight;
-                loadedMessageCount = messages.length;
+                body.scrollTop = body.scrollHeight; loadedMessageCount = messages.length;
             }
         }
-
         async function sendChatMessage() {
-            const input = document.getElementById('chatMsgInput');
-            const text = input.value.trim();
-            if(!text || !chatSessionId) return;
-            input.value = '';
-            
+            const input = document.getElementById('chatMsgInput'); const text = input.value.trim();
+            if(!text || !chatSessionId) return; input.value = '';
             document.getElementById('chatBody').innerHTML += `<div class="msg user"><span class="msg-label">👤 You</span>${text}</div>`;
             document.getElementById('chatBody').scrollTop = document.getElementById('chatBody').scrollHeight;
             loadedMessageCount++; 
-
             await fetch('/api/chat/send', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ session_id: chatSessionId, message: text }) });
             syncChat();
         }
-
         function handleChatEnter(e) { if(e.key === 'Enter') sendChatMessage(); }
     </script>
 </body>
