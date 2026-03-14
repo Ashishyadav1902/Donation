@@ -14,7 +14,6 @@
         h2.section-title { text-align: center; color: var(--dark); font-size: 2.5rem; margin-bottom: 30px; }
         h2.section-title span { color: var(--primary); }
         
-        /* Navigation */
         nav { background: white; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
         .logo { font-size: 1.5rem; font-weight: 700; color: var(--primary); text-decoration: none; }
         .nav-links { list-style: none; display: flex; gap: 20px; transition: 0.3s; }
@@ -193,14 +192,18 @@
                     <input type="text" id="d_name" required placeholder="Your Name">
                 </div>
                 <div class="form-group">
-                    <label>Email Address *</label>
-                    <input type="email" id="d_email" required placeholder="For tax receipt">
+                    <label>Mobile Number <span style="font-weight: normal; color: #888; font-size: 0.85rem;">(Optional)</span></label>
+                    <input type="tel" id="d_mobile" placeholder="e.g. 9876543210">
+                </div>
+                <div class="form-group">
+                    <label>Email Address <span style="font-weight: normal; color: #888; font-size: 0.85rem;">(Optional)</span></label>
+                    <input type="email" id="d_email" placeholder="For tax receipt">
                 </div>
                 <div class="form-group">
                     <label>Amount Paid (₹) * <span style="font-weight: normal; color: #888; font-size: 0.85rem;">(Minimum ₹5)</span></label>
                     <input type="number" id="d_amount" required placeholder="e.g. 100" min="5">
                 </div>
-                <div class="form-group" style="display: flex; flex-direction: column; justify-content: flex-end;">
+                <div class="form-group" style="display: flex; flex-direction: column; justify-content: flex-end; grid-column: span 2;">
                     <button type="submit" class="btn" id="payBtn" style="width: 100%; height: 50px; font-size: 1.1rem;">2. Submit Payment Details</button>
                 </div>
             </form>
@@ -230,7 +233,7 @@
                 </div>
                 <div class="faq-item">
                     <div class="faq-question" onclick="toggleFaq(this)">How do I get on the leaderboard? <span>+</span></div>
-                    <div class="faq-answer">Simply click the payment link, complete your payment, and fill out the details form above. You will be added instantly!</div>
+                    <div class="faq-answer">Simply click the payment link, complete your payment, and fill out the details form above. Once our team quickly verifies the transaction, you will be added instantly!</div>
                 </div>
             </section>
             
@@ -279,13 +282,11 @@
     </footer>
 
     <script>
-        // Scroll Animation Logic
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => { if(entry.isIntersecting) entry.target.classList.add('visible'); });
         }, { threshold: 0.1 });
         document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
 
-        // UI Interactions
         function toggleMenu() { document.getElementById('navLinks').classList.toggle('active'); }
         function toggleFaq(element) {
             let answer = element.nextElementSibling; let icon = element.querySelector('span');
@@ -298,7 +299,7 @@
             fetchLeaderboard();
             startLatestDonorCheck();
 
-            // DIRECT DB SUBMISSION HANDLER (No API)
+            // DIRECT DB SUBMISSION HANDLER WITH MOBILE
             document.getElementById('paymentForm').addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const btn = document.getElementById('payBtn');
@@ -307,6 +308,7 @@
 
                 const data = {
                     name: document.getElementById('d_name').value,
+                    mobile: document.getElementById('d_mobile').value,
                     email: document.getElementById('d_email').value,
                     amount: document.getElementById('d_amount').value
                 };
@@ -320,9 +322,10 @@
                     const result = await res.json();
                     
                     if(result.status === 'success'){
-                        status.style.color = "green"; status.innerText = "Thank you! You have been added to the Wall of Heroes.";
+                        status.style.color = "green"; 
+                        // UPDATED SUCCESS MESSAGE FOR APPROVAL SYSTEM
+                        status.innerText = "Thank you! Your donation is pending admin verification and will appear on the leaderboard shortly.";
                         document.getElementById('paymentForm').reset();
-                        fetchStats(); fetchLeaderboard(); checkLatestDonor();
                     } else {
                         status.style.color = "red"; status.innerText = "Error submitting details.";
                     }
