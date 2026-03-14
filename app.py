@@ -13,11 +13,8 @@ app = Flask(__name__)
 
 # --- SECURE CLOUD CONFIGURATION ---
 app.secret_key = os.getenv('FLASK_SECRET_KEY', 'super_secret_fallback_key')
-
 RAZORPAY_KEY_ID = os.getenv('RAZORPAY_KEY_ID', 'YOUR_TEST_KEY_ID_HERE')
 RAZORPAY_KEY_SECRET = os.getenv('RAZORPAY_KEY_SECRET', 'YOUR_TEST_KEY_SECRET_HERE')
-
-# Supabase Connection URL (Add this in Render Environment Variables)
 SUPABASE_URL = os.getenv('SUPABASE_URL', 'postgresql://postgres:password@localhost:5432/postgres')
 
 if RAZORPAY_KEY_ID != 'YOUR_TEST_KEY_ID_HERE':
@@ -25,52 +22,21 @@ if RAZORPAY_KEY_ID != 'YOUR_TEST_KEY_ID_HERE':
 else:
     razorpay_client = None
 
-# --- Database Setup (Supabase / PostgreSQL) ---
 def get_db():
-    # Connects to Supabase
-    conn = psycopg2.connect(SUPABASE_URL)
-    return conn
+    return psycopg2.connect(SUPABASE_URL)
 
 def init_db():
     conn = get_db()
     c = conn.cursor()
-    # Note: PostgreSQL uses SERIAL instead of AUTOINCREMENT
-    c.execute('''CREATE TABLE IF NOT EXISTS donations (
-                    id SERIAL PRIMARY KEY,
-                    name TEXT NOT NULL,
-                    email TEXT,
-                    amount INTEGER NOT NULL,
-                    payment_id TEXT UNIQUE,
-                    date TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
-    
-    c.execute('''CREATE TABLE IF NOT EXISTS tickets (
-                    id SERIAL PRIMARY KEY,
-                    name TEXT NOT NULL,
-                    email TEXT NOT NULL,
-                    subject TEXT,
-                    message TEXT NOT NULL,
-                    status TEXT DEFAULT 'Open',
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
-    
-    c.execute('''CREATE TABLE IF NOT EXISTS chat_sessions (
-                    session_id TEXT PRIMARY KEY,
-                    name TEXT NOT NULL,
-                    email TEXT NOT NULL,
-                    status TEXT DEFAULT 'Active',
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
-    
-    c.execute('''CREATE TABLE IF NOT EXISTS chat_messages (
-                    id SERIAL PRIMARY KEY,
-                    session_id TEXT,
-                    sender TEXT,
-                    message TEXT,
-                    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
+    c.execute('''CREATE TABLE IF NOT EXISTS donations (id SERIAL PRIMARY KEY, name TEXT NOT NULL, email TEXT, amount INTEGER NOT NULL, payment_id TEXT UNIQUE, date TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
+    c.execute('''CREATE TABLE IF NOT EXISTS tickets (id SERIAL PRIMARY KEY, name TEXT NOT NULL, email TEXT NOT NULL, subject TEXT, message TEXT NOT NULL, status TEXT DEFAULT 'Open', created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
+    c.execute('''CREATE TABLE IF NOT EXISTS chat_sessions (session_id TEXT PRIMARY KEY, name TEXT NOT NULL, email TEXT NOT NULL, status TEXT DEFAULT 'Active', created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
+    c.execute('''CREATE TABLE IF NOT EXISTS chat_messages (id SERIAL PRIMARY KEY, session_id TEXT, sender TEXT, message TEXT, timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
     conn.commit()
     conn.close()
 
 init_db()
 
-# Admin Login Decorator
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -80,17 +46,15 @@ def login_required(f):
     return decorated_function
 
 # ==========================================
-# PUBLIC ROUTES (Website)
+# PUBLIC ROUTES
 # ==========================================
-
 @app.route('/')
 def index():
     return render_template('index.html', razorpay_key_id=RAZORPAY_KEY_ID)
 
 @app.route('/api/create_order', methods=['POST'])
 def create_order():
-    if not razorpay_client:
-        return jsonify({"error": "Razorpay keys not configured"}), 500
+    if not razorpay_client: return jsonify({"error": "Razorpay keys missing"}), 500
     data = request.json
     amount_in_paise = int(data['amount']) * 100 
     try:
@@ -110,7 +74,6 @@ def verify_payment():
         })
         conn = get_db()
         c = conn.cursor()
-        # PostgreSQL uses %s for safe data insertion
         c.execute("INSERT INTO donations (name, email, amount, payment_id) VALUES (%s, %s, %s, %s)",
                   (data['donor_name'], data['donor_email'], int(data['amount']), data['razorpay_payment_id']))
         conn.commit()
@@ -118,7 +81,7 @@ def verify_payment():
         return jsonify({"status": "success"})
     except razorpay.errors.SignatureVerificationError:
         return jsonify({"status": "error"}), 400
-    except psycopg2.IntegrityError: # Changed to psycopg2 error
+    except psycopg2.IntegrityError:
         return jsonify({"status": "success"})
 
 @app.route('/api/submit_ticket', methods=['POST'])
@@ -135,20 +98,21 @@ def submit_ticket():
 @app.route('/api/leaderboard', methods=['GET'])
 def get_leaderboard():
     conn = get_db()
-    c = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) # Returns data as dictionaries
+    c = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
     c.execute("SELECT name, amount, date FROM donations ORDER BY amount DESC LIMIT 50")
     donations = c.fetchall()
     conn.close()
     return jsonify(donations)
 
-@app.route('/api/recent', methods=['GET'])
-def get_recent():
+# --- NEW: Get the single absolute latest donation ---
+@app.route('/api/latest_donation', methods=['GET'])
+def get_latest_donation():
     conn = get_db()
     c = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-    c.execute("SELECT name, amount FROM donations ORDER BY date DESC LIMIT 5")
-    recent = c.fetchall()
+    c.execute("SELECT id, name, amount FROM donations ORDER BY date DESC LIMIT 1")
+    latest = c.fetchone()
     conn.close()
-    return jsonify(recent)
+    return jsonify(latest if latest else {})
 
 @app.route('/api/stats', methods=['GET'])
 def get_stats():
@@ -159,17 +123,15 @@ def get_stats():
     conn.close()
     return jsonify({"total_amount": stats['total_amount'] or 0, "total_donors": stats['total_donors'] or 0})
 
-# --- Public Live Chat Routes ---
+# --- Live Chat ---
 @app.route('/api/chat/start', methods=['POST'])
 def start_chat():
     data = request.json
     session_id = str(uuid.uuid4())
     conn = get_db()
     c = conn.cursor()
-    c.execute("INSERT INTO chat_sessions (session_id, name, email) VALUES (%s, %s, %s)",
-              (session_id, data['name'], data['email']))
-    c.execute("INSERT INTO chat_messages (session_id, sender, message) VALUES (%s, %s, %s)",
-              (session_id, 'bot', f"Hi {data['name']}! I am the automated assistant. A human agent will be with you shortly. How can we help you today?"))
+    c.execute("INSERT INTO chat_sessions (session_id, name, email) VALUES (%s, %s, %s)", (session_id, data['name'], data['email']))
+    c.execute("INSERT INTO chat_messages (session_id, sender, message) VALUES (%s, %s, %s)", (session_id, 'bot', f"Hi {data['name']}! I am the automated assistant. A human agent will be with you shortly."))
     conn.commit()
     conn.close()
     return jsonify({"session_id": session_id})
@@ -177,12 +139,9 @@ def start_chat():
 @app.route('/api/chat/send', methods=['POST'])
 def send_message():
     data = request.json
-    session_id = data['session_id']
-    message = data['message']
     conn = get_db()
     c = conn.cursor()
-    c.execute("INSERT INTO chat_messages (session_id, sender, message) VALUES (%s, %s, %s)",
-              (session_id, 'user', message))
+    c.execute("INSERT INTO chat_messages (session_id, sender, message) VALUES (%s, %s, %s)", (data['session_id'], 'user', data['message']))
     conn.commit()
     conn.close()
     return jsonify({"status": "success"})
@@ -191,16 +150,14 @@ def send_message():
 def sync_chat(session_id):
     conn = get_db()
     c = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-    c.execute("SELECT sender, message, timestamp FROM chat_messages WHERE session_id = %s ORDER BY timestamp ASC", (session_id,))
+    c.execute("SELECT id, sender, message, timestamp FROM chat_messages WHERE session_id = %s ORDER BY timestamp ASC", (session_id,))
     messages = c.fetchall()
     conn.close()
     return jsonify(messages)
 
-
 # ==========================================
-# ADMIN ROUTES (CRM & Dashboard)
+# ADMIN ROUTES
 # ==========================================
-
 ADMIN_USERNAME = os.getenv('ADMIN_USERNAME', 'admin')
 ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD', 'admin123')
 
@@ -230,12 +187,7 @@ def get_full_stats():
     c.execute("SELECT COUNT(id) as open_tickets FROM tickets WHERE status='Open'")
     o_stats = c.fetchone()
     conn.close()
-    return jsonify({
-        "total_amount": d_stats['total_amount'] or 0,
-        "total_donors": d_stats['total_donors'] or 0,
-        "total_tickets": t_stats['total_tickets'] or 0,
-        "open_tickets": o_stats['open_tickets'] or 0
-    })
+    return jsonify({"total_amount": d_stats['total_amount'] or 0, "total_donors": d_stats['total_donors'] or 0, "total_tickets": t_stats['total_tickets'] or 0, "open_tickets": o_stats['open_tickets'] or 0})
 
 @app.route('/admin/api/all_donations', methods=['GET'])
 @login_required
@@ -253,8 +205,7 @@ def add_manual():
     data = request.json
     conn = get_db()
     c = conn.cursor()
-    c.execute("INSERT INTO donations (name, email, amount, payment_id) VALUES (%s, %s, %s, %s)",
-              (data['name'], data.get('email', 'N/A'), int(data['amount']), f"MANUAL_{datetime.now().timestamp()}"))
+    c.execute("INSERT INTO donations (name, email, amount, payment_id) VALUES (%s, %s, %s, %s)", (data['name'], data.get('email', 'N/A'), int(data['amount']), f"MANUAL_{datetime.now().timestamp()}"))
     conn.commit()
     conn.close()
     return jsonify({"status": "success"})
@@ -277,15 +228,11 @@ def export_donations():
     c.execute("SELECT id, name, email, amount, payment_id, date FROM donations ORDER BY date DESC")
     donations = c.fetchall()
     conn.close()
-
     si = io.StringIO()
     cw = csv.writer(si)
     cw.writerow(['ID', 'Name', 'Email', 'Amount (INR)', 'Payment ID', 'Date'])
-    for row in donations:
-        cw.writerow(row)
-    
-    output = si.getvalue()
-    return Response(output, mimetype="text/csv", headers={"Content-disposition": "attachment; filename=donations_export.csv"})
+    for row in donations: cw.writerow(row)
+    return Response(si.getvalue(), mimetype="text/csv", headers={"Content-disposition": "attachment; filename=donations_export.csv"})
 
 @app.route('/admin/api/tickets', methods=['GET'])
 @login_required
@@ -293,9 +240,7 @@ def get_tickets():
     conn = get_db()
     c = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
     c.execute("SELECT * FROM tickets ORDER BY created_at DESC")
-    tickets = c.fetchall()
-    conn.close()
-    return jsonify(tickets)
+    return jsonify(c.fetchall())
 
 @app.route('/admin/api/tickets/<int:id>/resolve', methods=['POST'])
 @login_required
@@ -304,7 +249,6 @@ def resolve_ticket(id):
     c = conn.cursor()
     c.execute("UPDATE tickets SET status = 'Resolved' WHERE id = %s", (id,))
     conn.commit()
-    conn.close()
     return jsonify({"status": "success"})
 
 @app.route('/admin/api/tickets/<int:id>/delete', methods=['POST'])
@@ -314,19 +258,15 @@ def delete_ticket(id):
     c = conn.cursor()
     c.execute("DELETE FROM tickets WHERE id = %s", (id,))
     conn.commit()
-    conn.close()
     return jsonify({"status": "success"})
 
-# --- Admin Live Chat Routes ---
 @app.route('/admin/api/chats/active', methods=['GET'])
 @login_required
 def get_active_chats():
     conn = get_db()
     c = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
     c.execute("SELECT * FROM chat_sessions WHERE status = 'Active' ORDER BY created_at DESC")
-    chats = c.fetchall()
-    conn.close()
-    return jsonify(chats)
+    return jsonify(c.fetchall())
 
 @app.route('/admin/api/chats/<session_id>/send', methods=['POST'])
 @login_required
@@ -334,10 +274,8 @@ def admin_send_message(session_id):
     data = request.json
     conn = get_db()
     c = conn.cursor()
-    c.execute("INSERT INTO chat_messages (session_id, sender, message) VALUES (%s, %s, %s)",
-              (session_id, 'admin', data['message']))
+    c.execute("INSERT INTO chat_messages (session_id, sender, message) VALUES (%s, %s, %s)", (session_id, 'admin', data['message']))
     conn.commit()
-    conn.close()
     return jsonify({"status": "success"})
 
 @app.route('/admin/api/chats/<session_id>/close', methods=['POST'])
@@ -346,10 +284,8 @@ def close_chat(session_id):
     conn = get_db()
     c = conn.cursor()
     c.execute("UPDATE chat_sessions SET status = 'Closed' WHERE session_id = %s", (session_id,))
-    c.execute("INSERT INTO chat_messages (session_id, sender, message) VALUES (%s, %s, %s)",
-              (session_id, 'admin', "Chat has been closed by the agent."))
+    c.execute("INSERT INTO chat_messages (session_id, sender, message) VALUES (%s, %s, %s)", (session_id, 'admin', "Chat has been closed by the agent."))
     conn.commit()
-    conn.close()
     return jsonify({"status": "success"})
 
 @app.route('/admin/logout')
