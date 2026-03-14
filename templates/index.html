@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hope Foundation - Empowering Children</title>
+    <title>Hope Foundation - Empowering Specially-Abled Children in India</title>
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     
@@ -33,16 +33,16 @@
         .fade-up { opacity: 0; transform: translateY(40px); transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
         .fade-up.visible { opacity: 1; transform: translateY(0); }
 
-        /* Hero Banner */
-        .hero-banner { background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80') center/cover; height: 85vh; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; text-align: center; padding: 0 20px; }
-        .hero-banner h1 { font-size: 3.5rem; margin-bottom: 20px; animation: slideInDown 1s ease-out; }
+        /* Hero Banner - Updated with Indian Children Image */
+        .hero-banner { background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1532372320572-cda25653a26d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80') center/cover; height: 85vh; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; text-align: center; padding: 0 20px; }
+        .hero-banner h1 { font-size: 3.5rem; margin-bottom: 20px; animation: slideInDown 1s ease-out; text-shadow: 2px 2px 10px rgba(0,0,0,0.5); }
         @keyframes slideInDown { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         
         .btn { padding: 12px 30px; background: var(--primary); color: white; border: none; border-radius: 30px; font-weight: 600; cursor: pointer; transition: 0.3s; text-decoration: none; display: inline-block; text-align: center;}
         .btn:hover { background: #357ABD; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(74, 144, 226, 0.4); }
         .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
         .btn-outline:hover { background: var(--primary); color: white; }
-        .trust-badges { margin-top: 30px; font-size: 0.9rem; color: #ddd; display: flex; gap: 15px; align-items: center; }
+        .trust-badges { margin-top: 30px; font-size: 0.9rem; color: #ddd; display: flex; gap: 15px; align-items: center; flex-wrap: wrap; justify-content: center; }
 
         /* Moving Infinite Banner (Marquee) */
         .marquee-wrapper { background: var(--dark); overflow: hidden; padding: 15px 0; color: white; display: flex; white-space: nowrap; }
@@ -55,6 +55,12 @@
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
         @media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } .hero-banner h1 { font-size: 2.2rem; } }
         
+        /* New About Us Specific Styles */
+        .mission-vision-box { background: white; padding: 25px; border-radius: 10px; border-left: 5px solid var(--primary); box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        .mission-vision-box h3 { color: var(--dark); margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
+        .about-image { width: 100%; height: 100%; object-fit: cover; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+
+        /* Form & Table */
         .form-group { margin-bottom: 20px; }
         .form-group label { display: block; margin-bottom: 8px; font-weight: 600; }
         .form-group input, .form-group textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; outline: none; transition: 0.3s; }
@@ -64,15 +70,15 @@
         th, td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
         th { background: var(--primary); color: white; }
 
-        /* Impact Gallery */
+        /* Impact Gallery - Updated with Indian context */
         .gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; }
-        .gallery img { width: 100%; height: 200px; object-fit: cover; border-radius: 10px; transition: transform 0.4s; cursor: pointer; }
-        .gallery img:hover { transform: scale(1.05); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+        .gallery img { width: 100%; height: 250px; object-fit: cover; border-radius: 10px; transition: transform 0.4s; cursor: pointer; }
+        .gallery img:hover { transform: scale(1.03); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
 
         /* FAQ Accordion */
         .faq-item { border-bottom: 1px solid #ddd; padding: 15px 0; }
         .faq-question { font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; color: var(--dark); }
-        .faq-answer { display: none; padding-top: 10px; color: #555; font-size: 0.95rem; }
+        .faq-answer { display: none; padding-top: 10px; color: #555; font-size: 0.95rem; line-height: 1.6; }
 
         /* Real Latest Toast Notification */
         .toast { position: fixed; bottom: -100px; left: 20px; background: white; color: var(--dark); padding: 15px 25px; border-radius: 50px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border-left: 5px solid var(--secondary); display: flex; align-items: center; gap: 10px; transition: bottom 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); z-index: 9999; font-weight: 600; font-size: 0.9rem; }
@@ -115,57 +121,76 @@
         <a href="#" class="logo">HopeFoundation.</a>
         <div class="menu-toggle" onclick="toggleMenu()">☰</div>
         <ul class="nav-links" id="navLinks">
-            <li><a href="#about" onclick="toggleMenu()">About</a></li>
-            <li><a href="#gallery" onclick="toggleMenu()">Impact</a></li>
-            <li><a href="#leaderboard" onclick="toggleMenu()">Leaderboard</a></li>
-            <li><a href="#faq" onclick="toggleMenu()">FAQ</a></li>
+            <li><a href="#about" onclick="toggleMenu()">About Us</a></li>
+            <li><a href="#gallery" onclick="toggleMenu()">Impact Gallery</a></li>
+            <li><a href="#leaderboard" onclick="toggleMenu()">Wall of Heroes</a></li>
+            <li><a href="#faq" onclick="toggleMenu()">FAQ & Support</a></li>
         </ul>
         <a href="#donate" class="btn" style="padding: 8px 20px;">Donate Now</a>
     </nav>
 
     <header class="hero-banner">
-        <h1>Empower a Child's Future ❤️</h1>
-        <p>Join thousands of donors providing education, medical aid, and specialized care to children in need.</p>
-        <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; margin-top: 20px;">
-            <a href="#donate" class="btn" style="font-size: 1.2rem; padding: 15px 40px; background: var(--secondary); color: var(--dark);">Donate Instantly</a>
+        <h1>Empower a Specially-Abled Child's Future ❤️</h1>
+        <p style="font-size: 1.2rem; max-width: 700px; margin: 0 auto;">Join thousands of Indians providing education, medical aid, and specialized care to the children who need it most across our nation.</p>
+        <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; margin-top: 30px;">
+            <a href="#donate" class="btn" style="font-size: 1.2rem; padding: 15px 40px; background: var(--secondary); color: var(--dark);">Make a Donation</a>
         </div>
         <div class="trust-badges">
-            <span>🔒 Secure Payments</span> | <span>✅ Verified NGO</span> | <span>🧾 80G Exemption</span>
+            <span>🔒 100% Secure Payments</span> | <span>✅ Government Verified NGO</span> | <span>🧾 80G Tax Exemption Available</span>
         </div>
     </header>
 
     <div class="marquee-wrapper fade-up">
         <div class="marquee-content">
-            100% Transparency <span>★</span> 5,000+ Children Helped <span>★</span> 80G Tax Deductible <span>★</span> Certified NGO <span>★</span>
-            100% Transparency <span>★</span> 5,000+ Children Helped <span>★</span> 80G Tax Deductible <span>★</span> Certified NGO <span>★</span>
+            100% Transparency <span>★</span> Over 5,000+ Children Helped in India <span>★</span> 80G Tax Deductible <span>★</span> Certified NGO <span>★</span>
+            100% Transparency <span>★</span> Over 5,000+ Children Helped in India <span>★</span> 80G Tax Deductible <span>★</span> Certified NGO <span>★</span>
         </div>
     </div>
 
     <div class="container">
-        <section id="about" class="grid-2 fade-up" style="align-items: center; margin-bottom: 60px;">
-            <div>
-                <h2 style="font-size: 2rem; color: var(--primary);">Our Impact</h2>
-                <p style="line-height: 1.8; color: #555; margin-top: 15px;">Every single rupee you donate goes directly towards purchasing specialized equipment, funding therapies, and building inclusive classrooms.</p>
+        
+        <section id="about" class="fade-up" style="margin-bottom: 60px;">
+            <h2 class="section-title">About <span>Hope Foundation</span></h2>
+            <div class="grid-2" style="align-items: stretch;">
+                <div style="display: flex; flex-direction: column; justify-content: center;">
+                    <p style="line-height: 1.8; color: #555; margin-bottom: 20px; font-size: 1.05rem;">
+                        In India, millions of specially-abled children lack access to basic educational and physical infrastructure. <strong>Hope Foundation</strong> was created to bridge this gap. We believe that physical limitations should never limit a child's dreams. 
+                    </p>
+                    <div class="mission-vision-box">
+                        <h3>🎯 Our Mission</h3>
+                        <p style="color: #666; font-size: 0.95rem;">To provide high-quality medical equipment, life-changing physical therapy, and inclusive classroom environments to specially-abled children across rural and urban India.</p>
+                    </div>
+                    <div class="mission-vision-box" style="border-left-color: var(--secondary);">
+                        <h3>👁️ Our Vision</h3>
+                        <p style="color: #666; font-size: 0.95rem;">An India where every child, regardless of their physical or cognitive abilities, is treated with dignity and given the exact tools they need to succeed and become independent.</p>
+                    </div>
+                </div>
+                <div>
+                    <img src="https://images.unsplash.com/photo-1603831862142-f8b88ceeb7b6?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Indian Child Smiling" class="about-image">
+                </div>
             </div>
-            <div class="glass-card text-center" style="margin-bottom: 0;">
-                <h2>Total Funds Raised</h2>
-                <h1 style="font-size: 3rem; color: var(--secondary);">₹<span id="totalAmount">0</span></h1>
-                <p>Supported by <span id="totalDonors" style="font-weight:bold; color: var(--primary);">0</span> Heroes</p>
-            </div>
+        </section>
+
+        <section class="glass-card text-center fade-up" style="background: linear-gradient(135deg, #e0f2fe 0%, #d1fae5 100%); border: none;">
+            <h2 style="color: var(--dark);">Our Collective Impact</h2>
+            <h1 style="font-size: 3.5rem; color: var(--primary); margin: 10px 0;">₹<span id="totalAmount">0</span></h1>
+            <p style="font-size: 1.2rem;">Raised with the love of <span id="totalDonors" style="font-weight:bold; color: var(--dark);">0</span> generous donors</p>
         </section>
 
         <section id="gallery" class="fade-up" style="margin-bottom: 60px;">
             <h2 class="section-title">Where Your <span>Money Goes</span></h2>
+            <p style="text-align: center; color: #666; margin-bottom: 30px; max-width: 700px; margin-inline: auto;">Every rupee contributed goes directly into funding wheelchairs, braille books, hearing aids, and specialized tutors in Indian schools.</p>
             <div class="gallery">
-                <img src="https://images.unsplash.com/photo-1516627145497-ae6968895b74?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Education">
-                <img src="https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Community">
-                <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Classroom">
-                <img src="https://images.unsplash.com/photo-1542810634-71277d95dcbb?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Care">
+                <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Indian Classroom">
+                <img src="https://images.unsplash.com/photo-1596443686812-a10c2c31c4f4?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Rural India Children">
+                <img src="https://images.unsplash.com/photo-1518398046578-8cca57782e17?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Kids Learning">
+                <img src="https://images.unsplash.com/photo-1617424177259-ceb8c66e28fb?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Helping Hands">
             </div>
         </section>
 
         <section id="donate" class="glass-card fade-up" style="border: 2px solid var(--primary);">
             <h2 class="section-title">Make a <span>Secure Donation</span></h2>
+            <p style="text-align: center; margin-bottom: 25px; color: #555;">No amount is too small. Join the movement today.</p>
             <form id="paymentForm" class="grid-2">
                 <div class="form-group">
                     <label>Full Name *</label>
@@ -173,15 +198,15 @@
                 </div>
                 <div class="form-group">
                     <label>Email Address *</label>
-                    <input type="email" id="d_email" required placeholder="For receipt">
+                    <input type="email" id="d_email" required placeholder="For tax receipt">
                 </div>
                 <div class="form-group">
-                    <label>Amount (₹) *</label>
-                    <input type="number" id="d_amount" required placeholder="e.g. 1000" min="10">
+                    <label>Amount (₹) * <span style="font-weight: normal; color: #888; font-size: 0.85rem;">(Minimum ₹5)</span></label>
+                    <input type="number" id="d_amount" required placeholder="e.g. 100" min="5">
                 </div>
                 <div class="form-group" style="display: flex; flex-direction: column; justify-content: flex-end;">
-                    <button type="submit" class="btn" id="payBtn" style="width: 100%; height: 50px; font-size: 1.1rem; margin-bottom: 10px;">Pay via Razorpay Popup</button>
-                    <a href="https://razorpay.me/@byashish" target="_blank" class="btn btn-outline" style="width: 100%; height: 45px; display: flex; justify-content: center; align-items: center; font-size: 0.9rem;">Having trouble? Pay via Direct Link</a>
+                    <button type="submit" class="btn" id="payBtn" style="width: 100%; height: 50px; font-size: 1.1rem; margin-bottom: 10px;">Pay Securely via Razorpay</button>
+                    <a href="https://razorpay.me/@byashish" target="_blank" class="btn btn-outline" style="width: 100%; height: 45px; display: flex; justify-content: center; align-items: center; font-size: 0.9rem;">UPI / Direct Link Alternative</a>
                 </div>
             </form>
             <p id="payStatus" style="text-align: center; margin-top: 15px; font-weight: bold;"></p>
@@ -201,14 +226,19 @@
             <section class="glass-card">
                 <h2>Frequently Asked Questions</h2>
                 <div class="faq-item">
-                    <div class="faq-question" onclick="toggleFaq(this)">Is my donation tax-deductible? <span>+</span></div>
-                    <div class="faq-answer">Yes, all donations are 80G tax-exempt. You will receive a receipt on your email.</div>
+                    <div class="faq-question" onclick="toggleFaq(this)">Can I donate just ₹5? <span>+</span></div>
+                    <div class="faq-answer">Absolutely! Every single rupee counts. Micro-donations pool together to create massive impact for these children.</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">Is my donation tax-deductible under 80G? <span>+</span></div>
+                    <div class="faq-answer">Yes, all donations are 80G tax-exempt. You will automatically receive a receipt on your registered email address.</div>
                 </div>
                 <div class="faq-item">
                     <div class="faq-question" onclick="toggleFaq(this)">Is my payment secure? <span>+</span></div>
-                    <div class="faq-answer">Absolutely. We use Razorpay, India's leading payment gateway with bank-level security.</div>
+                    <div class="faq-answer">We use Razorpay, India's leading and most trusted payment gateway with bank-level security and UPI support.</div>
                 </div>
             </section>
+            
             <section class="glass-card">
                 <h2>Need Help? Open a Ticket</h2>
                 <form id="ticketForm">
@@ -249,7 +279,8 @@
 
     <footer>
         <h3 style="margin-bottom: 10px; color: var(--secondary);">HopeFoundation.</h3>
-        <p>&copy; 2026 Hope Foundation. Developed by Ashish.</p>
+        <p style="color: #ccc; font-size: 0.9rem; margin-bottom: 20px;">Empowering specially-abled children across India.</p>
+        <p>&copy; 2026 Hope Foundation.</p>
     </footer>
 
     <script>
@@ -315,7 +346,7 @@
                     };
                     const rzp = new Razorpay(options); rzp.open();
                 } catch (err) { alert("Error: " + err.message); } 
-                finally { btn.innerText = "Pay via Razorpay Popup"; btn.disabled = false; }
+                finally { btn.innerText = "Pay Securely via Razorpay"; btn.disabled = false; }
             });
 
             // Support Ticket
@@ -368,7 +399,7 @@
         // --- BUG-FREE LIVE CHAT ---
         let chatSessionId = localStorage.getItem('chatSessionId');
         let chatPollInterval;
-        let loadedMessageCount = 0; // Tracks how many messages are in the UI
+        let loadedMessageCount = 0; 
 
         function toggleChat() {
             const win = document.getElementById('chatWindow');
@@ -395,7 +426,6 @@
             syncChat(); chatPollInterval = setInterval(syncChat, 3000);
         });
 
-        // BUG FIX: Only append NEW messages, do not erase innerHTML
         async function syncChat() {
             if(!chatSessionId) return;
             const res = await fetch(`/api/chat/sync/${chatSessionId}`);
@@ -403,7 +433,6 @@
             
             if(messages.length > loadedMessageCount) {
                 const body = document.getElementById('chatBody');
-                // Slice only the new messages
                 const newMessages = messages.slice(loadedMessageCount);
                 
                 newMessages.forEach(m => {
@@ -428,7 +457,7 @@
             // Optimistic UI update
             document.getElementById('chatBody').innerHTML += `<div class="msg user"><span class="msg-label">👤 You</span>${text}</div>`;
             document.getElementById('chatBody').scrollTop = document.getElementById('chatBody').scrollHeight;
-            loadedMessageCount++; // Manually increment to prevent double rendering
+            loadedMessageCount++; 
 
             await fetch('/api/chat/send', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ session_id: chatSessionId, message: text }) });
             syncChat();
