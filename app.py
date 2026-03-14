@@ -2,7 +2,6 @@ import os
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for, Response
 import psycopg2
 import psycopg2.extras
-# import razorpay  <-- COMMENTED OUT
 import csv
 import io
 import uuid
@@ -15,26 +14,34 @@ app = Flask(__name__)
 app.secret_key = os.getenv('FLASK_SECRET_KEY', 'super_secret_fallback_key')
 SUPABASE_URL = os.getenv('SUPABASE_URL', 'postgresql://postgres:password@localhost:5432/postgres')
 
-# --- RAZORPAY API CREDENTIALS COMMENTED OUT ---
-# RAZORPAY_KEY_ID = os.getenv('RAZORPAY_KEY_ID', 'YOUR_TEST_KEY_ID_HERE')
-# RAZORPAY_KEY_SECRET = os.getenv('RAZORPAY_KEY_SECRET', 'YOUR_TEST_KEY_SECRET_HERE')
-
-# if RAZORPAY_KEY_ID != 'YOUR_TEST_KEY_ID_HERE':
-#     razorpay_client = razorpay.Client(auth=(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET))
-# else:
-#     razorpay_client = None
-
 def get_db():
     return psycopg2.connect(SUPABASE_URL)
 
 def init_db():
     conn = get_db()
     c = conn.cursor()
+    # 1. Create tables if they don't exist
     c.execute('''CREATE TABLE IF NOT EXISTS donations (id SERIAL PRIMARY KEY, name TEXT NOT NULL, email TEXT, amount INTEGER NOT NULL, payment_id TEXT UNIQUE, date TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
     c.execute('''CREATE TABLE IF NOT EXISTS tickets (id SERIAL PRIMARY KEY, name TEXT NOT NULL, email TEXT NOT NULL, subject TEXT, message TEXT NOT NULL, status TEXT DEFAULT 'Open', created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
     c.execute('''CREATE TABLE IF NOT EXISTS chat_sessions (session_id TEXT PRIMARY KEY, name TEXT NOT NULL, email TEXT NOT NULL, status TEXT DEFAULT 'Active', created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
     c.execute('''CREATE TABLE IF NOT EXISTS chat_messages (id SERIAL PRIMARY KEY, session_id TEXT, sender TEXT, message TEXT, timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
     conn.commit()
+
+    # 2. Auto-Migration: Add new columns if they are missing (for existing databases)
+    try:
+        c.execute("ALTER TABLE donations ADD COLUMN mobile TEXT")
+        conn.commit()
+    except psycopg2.errors.DuplicateColumn:
+        conn.rollback() # Column already exists, ignore
+        
+    try:
+        c.execute("ALTER TABLE donations ADD COLUMN status TEXT DEFAULT 'pending'")
+        # Update existing older donations to be 'approved' by default so they don't disappear
+        c.execute("UPDATE donations SET status = 'approved' WHERE status IS NULL")
+        conn.commit()
+    except psycopg2.errors.DuplicateColumn:
+        conn.rollback() # Column already exists, ignore
+
     conn.close()
 
 init_db()
@@ -54,26 +61,19 @@ def login_required(f):
 def index():
     return render_template('index.html')
 
-# --- RAZORPAY API ROUTES COMMENTED OUT ---
-# @app.route('/api/create_order', methods=['POST'])
-# def create_order(): ...
-# 
-# @app.route('/api/verify_payment', methods=['POST'])
-# def verify_payment(): ...
-
-# --- NEW ROUTE: Direct form submission (Self-Reporting) ---
 @app.route('/api/submit_donation', methods=['POST'])
 def submit_donation():
     data = request.json
     conn = get_db()
     c = conn.cursor()
-    # Generates a random fake payment_id just so the database doesn't crash
-    fake_payment_id = "CLAIMED_" + str(uuid.uuid4())[:8]
-    c.execute("INSERT INTO donations (name, email, amount, payment_id) VALUES (%s, %s, %s, %s)",
-              (data['name'], data['email'], int(data['amount']), fake_payment_id))
+    fake_payment_id = "CLAIM_" + str(uuid.uuid4())[:8]
+    
+    # Insert with status 'pending' and new mobile field
+    c.execute("INSERT INTO donations (name, email, mobile, amount, payment_id, status) VALUES (%s, %s, %s, %s, %s, 'pending')",
+              (data['name'], data.get('email', ''), data.get('mobile', ''), int(data['amount']), fake_payment_id))
     conn.commit()
     conn.close()
-    return jsonify({"status": "success", "message": "Donation added to leaderboard!"})
+    return jsonify({"status": "success", "message": "Donation added! Pending admin approval."})
 
 @app.route('/api/submit_ticket', methods=['POST'])
 def submit_ticket():
@@ -90,7 +90,8 @@ def submit_ticket():
 def get_leaderboard():
     conn = get_db()
     c = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-    c.execute("SELECT name, amount, date FROM donations ORDER BY amount DESC LIMIT 50")
+    # ONLY fetch approved donations
+    c.execute("SELECT name, amount, date FROM donations WHERE status = 'approved' ORDER BY amount DESC LIMIT 50")
     donations = c.fetchall()
     conn.close()
     return jsonify(donations)
@@ -99,7 +100,8 @@ def get_leaderboard():
 def get_latest_donation():
     conn = get_db()
     c = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-    c.execute("SELECT id, name, amount FROM donations ORDER BY date DESC LIMIT 1")
+    # ONLY fetch approved
+    c.execute("SELECT id, name, amount FROM donations WHERE status = 'approved' ORDER BY date DESC LIMIT 1")
     latest = c.fetchone()
     conn.close()
     return jsonify(latest if latest else {})
@@ -108,7 +110,8 @@ def get_latest_donation():
 def get_stats():
     conn = get_db()
     c = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-    c.execute("SELECT SUM(amount) as total_amount, COUNT(id) as total_donors FROM donations")
+    # ONLY sum approved donations
+    c.execute("SELECT SUM(amount) as total_amount, COUNT(id) as total_donors FROM donations WHERE status = 'approved'")
     stats = c.fetchone()
     conn.close()
     return jsonify({"total_amount": stats['total_amount'] or 0, "total_donors": stats['total_donors'] or 0})
@@ -170,7 +173,7 @@ def admin_dashboard():
 def get_full_stats():
     conn = get_db()
     c = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-    c.execute("SELECT SUM(amount) as total_amount, COUNT(id) as total_donors FROM donations")
+    c.execute("SELECT SUM(amount) as total_amount, COUNT(id) as total_donors FROM donations WHERE status = 'approved'")
     d_stats = c.fetchone()
     c.execute("SELECT COUNT(id) as total_tickets FROM tickets")
     t_stats = c.fetchone()
@@ -184,10 +187,21 @@ def get_full_stats():
 def get_all_donations():
     conn = get_db()
     c = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-    c.execute("SELECT * FROM donations ORDER BY date DESC")
+    # Order by status so 'pending' shows at the top!
+    c.execute("SELECT * FROM donations ORDER BY status DESC, date DESC")
     donations = c.fetchall()
     conn.close()
     return jsonify(donations)
+
+@app.route('/admin/api/approve_donation/<int:id>', methods=['POST'])
+@login_required
+def approve_donation(id):
+    conn = get_db()
+    c = conn.cursor()
+    c.execute("UPDATE donations SET status = 'approved' WHERE id = %s", (id,))
+    conn.commit()
+    conn.close()
+    return jsonify({"status": "success"})
 
 @app.route('/admin/api/add_manual', methods=['POST'])
 @login_required
@@ -195,7 +209,9 @@ def add_manual():
     data = request.json
     conn = get_db()
     c = conn.cursor()
-    c.execute("INSERT INTO donations (name, email, amount, payment_id) VALUES (%s, %s, %s, %s)", (data['name'], data.get('email', 'N/A'), int(data['amount']), f"MANUAL_{datetime.now().timestamp()}"))
+    # Manual adds are instantly approved
+    c.execute("INSERT INTO donations (name, email, mobile, amount, payment_id, status) VALUES (%s, %s, %s, %s, %s, 'approved')", 
+              (data['name'], data.get('email', ''), data.get('mobile', ''), int(data['amount']), f"MANUAL_{datetime.now().timestamp()}"))
     conn.commit()
     conn.close()
     return jsonify({"status": "success"})
@@ -215,12 +231,12 @@ def delete_donation(id):
 def export_donations():
     conn = get_db()
     c = conn.cursor()
-    c.execute("SELECT id, name, email, amount, payment_id, date FROM donations ORDER BY date DESC")
+    c.execute("SELECT id, name, email, mobile, amount, status, payment_id, date FROM donations ORDER BY date DESC")
     donations = c.fetchall()
     conn.close()
     si = io.StringIO()
     cw = csv.writer(si)
-    cw.writerow(['ID', 'Name', 'Email', 'Amount (INR)', 'Payment ID', 'Date'])
+    cw.writerow(['ID', 'Name', 'Email', 'Mobile', 'Amount (INR)', 'Status', 'Payment ID', 'Date'])
     for row in donations: cw.writerow(row)
     return Response(si.getvalue(), mimetype="text/csv", headers={"Content-disposition": "attachment; filename=donations_export.csv"})
 
