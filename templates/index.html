@@ -21,6 +21,12 @@
         .nav-links a:hover { color: var(--primary); }
         .menu-toggle { display: none; font-size: 1.5rem; cursor: pointer; }
 
+        @media (max-width: 768px) {
+            .menu-toggle { display: block; }
+            .nav-links { display: none; flex-direction: column; position: absolute; top: 60px; left: 0; width: 100%; background: white; padding: 20px; box-shadow: 0 5px 10px rgba(0,0,0,0.1); }
+            .nav-links.active { display: flex; }
+        }
+
         .fade-up { opacity: 0; transform: translateY(40px); transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
         .fade-up.visible { opacity: 1; transform: translateY(0); }
 
@@ -29,7 +35,9 @@
         @keyframes slideInDown { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         
         .btn { padding: 15px 30px; background: var(--primary); color: white; border: none; border-radius: 30px; font-weight: 600; cursor: pointer; transition: 0.3s; text-decoration: none; display: inline-block; text-align: center;}
-        .btn:hover { background: #357ABD; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(74, 144, 226, 0.4); }
+        .btn:hover:not(:disabled) { background: #357ABD; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(74, 144, 226, 0.4); }
+        .btn:disabled { background: #ccc; cursor: not-allowed; opacity: 0.7; }
+        
         .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
         .btn-outline:hover { background: var(--primary); color: white; }
         .trust-badges { margin-top: 30px; font-size: 0.9rem; color: #ddd; display: flex; gap: 15px; align-items: center; flex-wrap: wrap; justify-content: center; }
@@ -48,20 +56,23 @@
 
         .form-group { margin-bottom: 20px; width: 100%; }
         .form-group label { display: block; margin-bottom: 8px; font-weight: 600; }
-        /* Fixed mobile zoom and styling issues */
-        .form-group input, .form-group textarea { 
+        .form-group input[type="text"], .form-group input[type="tel"], .form-group input[type="email"], .form-group input[type="number"], .form-group textarea { 
             width: 100%; 
-            padding: 15px; /* Larger touch area for phones */
+            padding: 15px; 
             border: 1px solid #ddd; 
             border-radius: 8px; 
             outline: none; 
             transition: 0.3s; 
-            font-size: 16px !important; /* CRITICAL: Prevents iOS from zooming in */
+            font-size: 16px !important; 
             background: #fff;
-            -webkit-appearance: none; /* Prevents custom iOS styling */
+            -webkit-appearance: none; 
         }
         .form-group input:focus { border-color: var(--primary); box-shadow: 0 0 5px rgba(74, 144, 226, 0.3); }
         
+        .checkbox-container { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 20px; background: #fffbeb; padding: 15px; border-radius: 8px; border: 1px solid #fcd34d; }
+        .checkbox-container input[type="checkbox"] { margin-top: 5px; width: 18px; height: 18px; cursor: pointer; }
+        .checkbox-container label { font-size: 0.9rem; color: #b45309; font-weight: 600; cursor: pointer; }
+
         table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; }
         th, td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
         th { background: var(--primary); color: white; white-space: nowrap; }
@@ -116,11 +127,9 @@
             .glass-card { padding: 20px; }
             h2.section-title { font-size: 2rem; }
             
-            /* THIS FIXES THE MOBILE FORM OVERFLOW / SCROLLING ISSUE */
             .grid-2 { display: flex; flex-direction: column; gap: 20px; }
             .form-group[style*="grid-column: span 2"] { grid-column: auto !important; }
             
-            /* Responsive Chat Window */
             .chat-widget { bottom: 15px; right: 15px; }
             .chat-window { width: calc(100vw - 30px); right: 0; bottom: 70px; height: 60vh; }
             
@@ -205,7 +214,7 @@
 
         <section id="donate" class="glass-card fade-up" style="border: 2px solid var(--primary);">
             <h2 class="section-title">Submit <span>Donation Details</span></h2>
-            <p style="text-align: center; margin-bottom: 25px; color: #555;"><strong>Step 1:</strong> Pay via our secure payment link. <br><strong>Step 2:</strong> Fill out this form to appear on the Wall of Heroes.</p>
+            <p style="text-align: center; margin-bottom: 25px; color: #555;"><strong>Step 1:</strong> Pay via our secure payment link. <br><strong>Step 2:</strong> Enter your exact Transaction ID below so we can verify your payment.</p>
             
             <div style="text-align: center; margin-bottom: 30px;">
                 <a href="https://razorpay.me/@byashish" target="_blank" class="btn" style="font-size: 1.1rem; padding: 15px 40px; background: var(--secondary); color: var(--dark);">1. Click Here to Pay First</a>
@@ -217,19 +226,27 @@
                     <input type="text" id="d_name" required placeholder="Your Name">
                 </div>
                 <div class="form-group">
-    <label>Mobile Number *</label>
-    <input type="tel" id="d_mobile" required placeholder="e.g. 9876543210">
-</div>
-                <div class="form-group">
-                    <label>Email Address <span style="font-weight: normal; color: #888; font-size: 0.85rem;">(Optional)</span></label>
-                    <input type="email" id="d_email" placeholder="For tax receipt">
+                    <label>Mobile Number *</label>
+                    <input type="tel" id="d_mobile" required placeholder="e.g. 9876543210">
                 </div>
+                
+                <div class="form-group">
+                    <label>Transaction ID / UPI Ref No. * <span style="font-weight: normal; color: #e74c3c; font-size: 0.85rem;">(Required for verification)</span></label>
+                    <input type="text" id="d_txn_id" required placeholder="e.g. pay_XXXXXX or 123456789012">
+                </div>
+
                 <div class="form-group">
                     <label>Amount Paid (₹) * <span style="font-weight: normal; color: #888; font-size: 0.85rem;">(Minimum ₹5)</span></label>
                     <input type="number" id="d_amount" required placeholder="e.g. 100" min="5">
                 </div>
-                <div class="form-group" style="display: flex; flex-direction: column; justify-content: flex-end; grid-column: span 2;">
-                    <button type="submit" class="btn" id="payBtn" style="width: 100%; height: 50px; font-size: 1.1rem;">2. Submit Payment Details</button>
+                
+                <div class="form-group" style="grid-column: span 2;">
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="verifyCheck" onchange="toggleSubmitButton()">
+                        <label for="verifyCheck">I confirm that I have made the payment successfully and the Transaction ID entered above is 100% correct. I understand fake claims will be deleted.</label>
+                    </div>
+                    
+                    <button type="submit" class="btn" id="payBtn" disabled style="width: 100%; height: 50px; font-size: 1.1rem;">2. Submit Payment Details</button>
                 </div>
             </form>
             <p id="payStatus" style="text-align: center; margin-top: 15px; font-weight: bold;"></p>
@@ -254,11 +271,11 @@
                 </div>
                 <div class="faq-item">
                     <div class="faq-question" onclick="toggleFaq(this)">Is my donation tax-deductible under 80G? <span>+</span></div>
-                    <div class="faq-answer">Yes, all donations are 80G tax-exempt. You will automatically receive a receipt on your registered email address.</div>
+                    <div class="faq-answer">Yes, all donations are 80G tax-exempt. You will automatically receive a receipt on your registered email address if provided.</div>
                 </div>
                 <div class="faq-item">
                     <div class="faq-question" onclick="toggleFaq(this)">How do I get on the leaderboard? <span>+</span></div>
-                    <div class="faq-answer">Simply click the payment link, complete your payment, and fill out the details form above. Once our team quickly verifies the transaction, you will be added instantly!</div>
+                    <div class="faq-answer">Simply click the payment link, complete your payment, and fill out the details form with your Transaction ID. Once our team verifies the payment against our bank records, you will be added instantly!</div>
                 </div>
             </section>
             
@@ -325,6 +342,13 @@
             else { answer.style.display = "block"; icon.innerText = "−"; }
         }
 
+        // Toggle Submit Button Logic
+        function toggleSubmitButton() {
+            const checkbox = document.getElementById('verifyCheck');
+            const submitBtn = document.getElementById('payBtn');
+            submitBtn.disabled = !checkbox.checked;
+        }
+
         document.addEventListener("DOMContentLoaded", () => {
             fetchStats();
             fetchLeaderboard();
@@ -336,10 +360,13 @@
                 const status = document.getElementById('payStatus');
                 btn.innerText = "Submitting..."; btn.disabled = true;
 
+                // Send the TXN ID in the email field temporarily so you can see it in the DB without changing app.py
+                const txn_data_string = "TXN ID: " + document.getElementById('d_txn_id').value;
+
                 const data = {
                     name: document.getElementById('d_name').value,
                     mobile: document.getElementById('d_mobile').value,
-                    email: document.getElementById('d_email').value,
+                    email: txn_data_string, // Saved into the email column so you can see it in Admin panel
                     amount: document.getElementById('d_amount').value
                 };
 
@@ -353,15 +380,18 @@
                     
                     if(result.status === 'success'){
                         status.style.color = "green"; 
-                        status.innerText = "Thank you! Your donation is pending admin verification and will appear on the leaderboard shortly.";
+                        status.innerText = "Thank you! We will verify your Transaction ID. Once confirmed, you will appear on the leaderboard.";
                         document.getElementById('paymentForm').reset();
+                        document.getElementById('verifyCheck').checked = false; // reset checkbox
                     } else {
                         status.style.color = "red"; status.innerText = "Error submitting details.";
+                        btn.disabled = false;
                     }
                 } catch (err) {
                     status.style.color = "red"; status.innerText = "Network Error.";
+                    btn.disabled = false;
                 } finally {
-                    btn.innerText = "2. Submit Payment Details"; btn.disabled = false;
+                    btn.innerText = "2. Submit Payment Details";
                 }
             });
 
