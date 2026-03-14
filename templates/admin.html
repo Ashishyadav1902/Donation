@@ -82,6 +82,13 @@
 </head>
 <body>
 
+    <div id="imageModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:9999; justify-content:center; align-items:center;">
+        <div style="position:relative; max-width:90%; max-height:90%;">
+            <button onclick="document.getElementById('imageModal').style.display='none'" style="position:absolute; top:-40px; right:0; background:var(--danger); color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer; font-weight:bold;">Close X</button>
+            <img id="previewImage" src="" style="max-width:100%; max-height:90vh; border-radius:10px; border: 3px solid white;">
+        </div>
+    </div>
+
     <div class="login-wrapper">
         <form class="login-card" method="POST" action="/admin">
             <h2 style="margin-bottom: 10px; color: var(--dark);">Admin Access</h2>
@@ -99,9 +106,7 @@
         <div class="nav-items">
             <a class="nav-item active" onclick="switchTab('dashboard', this)">📊 Dashboard</a>
             <a class="nav-item" onclick="switchTab('donations', this)">💰 Approvals & DB</a>
-            
             <a class="nav-item" onclick="switchTab('stories', this)">🌟 Success Stories</a>
-            
             <a class="nav-item" onclick="switchTab('support', this)">✉️ Support Tickets</a>
             <a class="nav-item" onclick="switchTab('livechat', this)">💬 Live Chat Hub</a>
         </div>
@@ -234,7 +239,7 @@
             if(tabId === 'donations') loadAllDonations();
             if(tabId === 'support') loadTickets();
             if(tabId === 'dashboard') loadStats();
-            if(tabId === 'stories') loadAdminStories(); // NEW Fetch Stories
+            if(tabId === 'stories') loadAdminStories();
             if(tabId === 'livechat') { loadActiveChats(); adminChatPoll = setInterval(loadActiveChats, 5000); } 
             else { clearInterval(adminChatPoll); }
         }
@@ -249,42 +254,31 @@
                 alert('Manual donation added and approved!'); document.getElementById('manualForm').reset(); loadStats(); loadAllDonations();
             });
 
-            // NEW: Add Story Form Submit
             document.getElementById('storyForm').addEventListener('submit', async (e) => {
                 e.preventDefault();
-                const data = {
-                    title: document.getElementById('st_title').value,
-                    image_url: document.getElementById('st_img').value,
-                    content: document.getElementById('st_content').value
-                };
+                const data = { title: document.getElementById('st_title').value, image_url: document.getElementById('st_img').value, content: document.getElementById('st_content').value };
                 await fetch('/admin/api/add_story', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data) });
                 alert('Story successfully published to the live website!'); 
-                document.getElementById('storyForm').reset(); 
-                loadAdminStories();
+                document.getElementById('storyForm').reset(); loadAdminStories();
             });
         });
 
-        // NEW: Load Admin Stories Table
+        function viewProof(base64Image) {
+            document.getElementById('previewImage').src = base64Image;
+            document.getElementById('imageModal').style.display = 'flex';
+        }
+
         async function loadAdminStories() {
-            const res = await fetch('/api/stories'); 
-            const stories = await res.json();
+            const res = await fetch('/api/stories'); const stories = await res.json();
             const tbody = document.getElementById('storyBody'); tbody.innerHTML = '';
             stories.forEach(s => {
-                tbody.innerHTML += `<tr>
-                    <td>#${s.id}</td>
-                    <td><img src="${s.image_url}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px;"></td>
-                    <td><strong>${s.title}</strong></td>
-                    <td><small>${s.content.substring(0, 50)}...</small></td>
-                    <td><button class="btn btn-danger" onclick="deleteStory(${s.id})">Delete</button></td>
-                </tr>`;
+                tbody.innerHTML += `<tr><td>#${s.id}</td><td><img src="${s.image_url}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px;"></td><td><strong>${s.title}</strong></td><td><small>${s.content.substring(0, 50)}...</small></td><td><button class="btn btn-danger" onclick="deleteStory(${s.id})">Delete</button></td></tr>`;
             });
         }
         
-        // NEW: Delete Story
         async function deleteStory(id) {
             if(confirm('Are you sure you want to permanently delete this story from the live website?')) {
-                await fetch(`/admin/api/delete_story/${id}`, { method: 'POST' });
-                loadAdminStories();
+                await fetch(`/admin/api/delete_story/${id}`, { method: 'POST' }); loadAdminStories();
             }
         }
 
@@ -300,6 +294,12 @@
             data.forEach(d => { 
                 let badgeClass = d.status === 'approved' ? 'approved' : 'pending';
                 let badgeText = d.status === 'approved' ? 'Approved' : 'Pending';
+                
+                // Screenshot Preview Button
+                let proofBtn = (d.screenshot && d.status === 'pending') 
+                    ? `<button class="btn" style="background:#3b82f6; padding:5px 10px; margin-bottom:5px; margin-right:5px;" onclick="viewProof('${d.screenshot}')">🖼️ View Proof</button>` 
+                    : '';
+
                 let approveBtn = d.status === 'pending' ? `<button class="btn btn-warning" style="padding:5px 10px; margin-bottom:5px;" onclick="approveDonation(${d.id})">Approve</button>` : '';
 
                 tbody.innerHTML += `
@@ -313,12 +313,16 @@
                         <td style="color:var(--success); font-weight:bold;">₹${d.amount.toLocaleString('en-IN')}</td>
                         <td><span class="badge ${badgeClass}">${badgeText}</span></td>
                         <td>${new Date(d.date).toLocaleDateString()}</td>
-                        <td style="white-space: nowrap;">${approveBtn} <button class="btn btn-danger" style="padding:5px 10px;" onclick="deleteDonation(${d.id})">Delete</button></td>
+                        <td style="white-space: nowrap;">
+                            ${proofBtn}
+                            ${approveBtn}
+                            <button class="btn btn-danger" style="padding:5px 10px;" onclick="deleteDonation(${d.id})">Delete</button>
+                        </td>
                     </tr>`; 
             });
         }
         
-        async function approveDonation(id) { if(confirm('Approve this donation to display it on the public leaderboard?')) { await fetch(`/admin/api/approve_donation/${id}`, { method: 'POST' }); loadAllDonations(); loadStats(); } }
+        async function approveDonation(id) { if(confirm('Approve this donation to display it on the public leaderboard? (This will auto-delete the screenshot to save DB space)')) { await fetch(`/admin/api/approve_donation/${id}`, { method: 'POST' }); loadAllDonations(); loadStats(); } }
         async function deleteDonation(id) { if(confirm('Delete this record?')) { await fetch(`/admin/api/delete_donation/${id}`, { method: 'POST' }); loadAllDonations(); loadStats(); } }
         function filterDonations() { let input = document.getElementById("searchDonations").value.toLowerCase(); let rows = document.getElementById("allDonationsBody").getElementsByTagName("tr"); for (let i = 0; i < rows.length; i++) { let col = rows[i].getElementsByTagName("td")[1]; if (col) { rows[i].style.display = (col.textContent || col.innerText).toLowerCase().indexOf(input) > -1 ? "" : "none"; } } }
 
@@ -359,8 +363,8 @@
                 const body = document.getElementById('adminChatBody'); const newMessages = messages.slice(adminLoadedMessageCount);
                 newMessages.forEach(m => {
                     let align = '', bg = '', color = '', label = '';
-                    if (m.sender === 'admin') { align = 'align-self: flex-end;'; bg = 'var(--primary)'; color = 'white'; label = '👨‍💻 You'; } 
-                    else if (m.sender === 'bot') { align = 'align-self: center;'; bg = '#e0e7ff'; color = '#3730a3'; label = '🤖 Bot'; } 
+                    if (m.sender === 'admin') { align = 'align-self: flex-end;'; bg = 'var(--primary)'; color = 'white'; label = '👨‍💻 You (Support)'; } 
+                    else if (m.sender === 'bot') { align = 'align-self: center;'; bg = '#e0e7ff'; color = '#3730a3'; label = '🤖 Assistant (Bot)'; } 
                     else { align = 'align-self: flex-start;'; bg = 'white'; color = 'black'; label = '👤 User'; }
                     body.innerHTML += `<div style="max-width: 85%; padding: 10px 15px; border-radius: 10px; margin-top: 15px; margin-bottom: 5px; border: 1px solid #ddd; position: relative; ${align} background: ${bg}; color: ${color};">
                         <span style="font-size: 0.7rem; font-weight: bold; position: absolute; top: -18px; color: #777; left: 5px; white-space: nowrap;">${label}</span>${m.message}</div>`;
@@ -373,7 +377,7 @@
             const input = document.getElementById('adminChatInput'); const text = input.value.trim();
             if(!text || !currentAdminSessionId) return; input.value = '';
             document.getElementById('adminChatBody').innerHTML += `<div style="max-width: 85%; padding: 10px 15px; border-radius: 10px; margin-top: 15px; margin-bottom: 5px; border: 1px solid #ddd; position: relative; align-self: flex-end; background: var(--primary); color: white;">
-                <span style="font-size: 0.7rem; font-weight: bold; position: absolute; top: -18px; color: #777; left: 5px; white-space: nowrap;">👨‍💻 You</span>${text}</div>`;
+                <span style="font-size: 0.7rem; font-weight: bold; position: absolute; top: -18px; color: #777; left: 5px; white-space: nowrap;">👨‍💻 You (Support)</span>${text}</div>`;
             document.getElementById('adminChatBody').scrollTop = document.getElementById('adminChatBody').scrollHeight; adminLoadedMessageCount++;
             await fetch(`/admin/api/chats/${currentAdminSessionId}/send`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({message: text}) });
             syncAdminChat();
