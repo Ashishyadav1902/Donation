@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hope Foundation - Empowering Specially-Abled Children in India</title>
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     
     <style>
@@ -29,11 +28,9 @@
             .nav-links.active { display: flex; }
         }
 
-        /* Scroll Animations (Dynamic Fade Up) */
         .fade-up { opacity: 0; transform: translateY(40px); transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
         .fade-up.visible { opacity: 1; transform: translateY(0); }
 
-        /* Hero Banner - Updated with Indian Children Image */
         .hero-banner { background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1532372320572-cda25653a26d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80') center/cover; height: 85vh; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; text-align: center; padding: 0 20px; }
         .hero-banner h1 { font-size: 3.5rem; margin-bottom: 20px; animation: slideInDown 1s ease-out; text-shadow: 2px 2px 10px rgba(0,0,0,0.5); }
         @keyframes slideInDown { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
@@ -44,23 +41,19 @@
         .btn-outline:hover { background: var(--primary); color: white; }
         .trust-badges { margin-top: 30px; font-size: 0.9rem; color: #ddd; display: flex; gap: 15px; align-items: center; flex-wrap: wrap; justify-content: center; }
 
-        /* Moving Infinite Banner (Marquee) */
         .marquee-wrapper { background: var(--dark); overflow: hidden; padding: 15px 0; color: white; display: flex; white-space: nowrap; }
         .marquee-content { display: inline-block; animation: marquee 20s linear infinite; font-weight: 600; font-size: 1.1rem; }
         @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
         .marquee-content span { margin: 0 30px; color: var(--secondary); }
 
-        /* General UI Elements */
         .glass-card { background: rgba(255, 255, 255, 0.9); border-radius: 15px; padding: 30px; box-shadow: 0 8px 30px rgba(0,0,0,0.05); margin-bottom: 40px; }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
         @media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } .hero-banner h1 { font-size: 2.2rem; } }
         
-        /* New About Us Specific Styles */
         .mission-vision-box { background: white; padding: 25px; border-radius: 10px; border-left: 5px solid var(--primary); box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px; }
         .mission-vision-box h3 { color: var(--dark); margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
         .about-image { width: 100%; height: 100%; object-fit: cover; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
 
-        /* Form & Table */
         .form-group { margin-bottom: 20px; }
         .form-group label { display: block; margin-bottom: 8px; font-weight: 600; }
         .form-group input, .form-group textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; outline: none; transition: 0.3s; }
@@ -70,22 +63,18 @@
         th, td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
         th { background: var(--primary); color: white; }
 
-        /* Impact Gallery - Updated with Indian context */
         .gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; }
         .gallery img { width: 100%; height: 250px; object-fit: cover; border-radius: 10px; transition: transform 0.4s; cursor: pointer; }
         .gallery img:hover { transform: scale(1.03); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
 
-        /* FAQ Accordion */
         .faq-item { border-bottom: 1px solid #ddd; padding: 15px 0; }
         .faq-question { font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; color: var(--dark); }
         .faq-answer { display: none; padding-top: 10px; color: #555; font-size: 0.95rem; line-height: 1.6; }
 
-        /* Real Latest Toast Notification */
         .toast { position: fixed; bottom: -100px; left: 20px; background: white; color: var(--dark); padding: 15px 25px; border-radius: 50px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border-left: 5px solid var(--secondary); display: flex; align-items: center; gap: 10px; transition: bottom 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); z-index: 9999; font-weight: 600; font-size: 0.9rem; }
         .toast.show { bottom: 30px; }
         .toast span.amount { color: var(--primary); font-size: 1.1rem; }
         
-        /* Footer */
         footer { background: var(--dark); color: white; padding: 50px 20px 20px; text-align: center; }
 
         /* LIVE CHAT WIDGET */
@@ -143,6 +132,8 @@
     <div class="marquee-wrapper fade-up">
         <div class="marquee-content">
             Aap ka ek donation kayi bacho ki madad kar sakta hai ❤️ <span>★</span> 
+            Aap ka ek donation kayi bacho ki madad kar sakta hai ❤️ <span>★</span> 
+            Aap ka ek donation kayi bacho ki madad kar sakta hai ❤️ <span>★</span> 
             Aap ka ek donation kayi bacho ki madad kar sakta hai ❤️ <span>★</span>
         </div>
     </div>
@@ -180,20 +171,22 @@
         <section id="gallery" class="fade-up" style="margin-bottom: 60px;">
             <h2 class="section-title">Where Your <span>Money Goes</span></h2>
             <p style="text-align: center; color: #666; margin-bottom: 30px; max-width: 700px; margin-inline: auto;">Every rupee contributed goes directly into funding wheelchairs, braille books, hearing aids, and specialized tutors in Indian schools.</p>
-<div class="gallery">
+            <div class="gallery">
                 <img src="https://www.sharing4good.org/sites/default/files/styles/article_image/public/field/image/DSC_3664.JPG" alt="World Disabled Day - Indian Family">
-                
-                <img src="https://images.pexels.com/photos/6994992/pexels-photo-6994992.jpeg" alt="Special Needs Children Support Programs India">
-                
+                <img src="https://www.skynettechnologies.com/sites/default/files/special-needs-children-support-programs-india.jpg" alt="Special Needs Children Support Programs India">
                 <img src="https://images.livemint.com/img/2021/12/07/original/India-International-Day-of-Persons-with-Disabilities-9_1638887870401.jpg" alt="Persons with Disabilities India">
-                
                 <img src="https://www.shutterstock.com/image-photo/happy-young-brother-playing-his-260nw-2173952411.jpg" alt="Happy Young Brother Playing">
             </div>
         </section>
 
         <section id="donate" class="glass-card fade-up" style="border: 2px solid var(--primary);">
-            <h2 class="section-title">Make a <span>Secure Donation</span></h2>
-            <p style="text-align: center; margin-bottom: 25px; color: #555;">No amount is too small. Join the movement today.</p>
+            <h2 class="section-title">Submit <span>Donation Details</span></h2>
+            <p style="text-align: center; margin-bottom: 25px; color: #555;"><strong>Step 1:</strong> Pay via our secure payment link. <br><strong>Step 2:</strong> Fill out this form to appear on the Wall of Heroes.</p>
+            
+            <div style="text-align: center; margin-bottom: 30px;">
+                <a href="https://razorpay.me/@byashish" target="_blank" class="btn" style="font-size: 1.1rem; padding: 15px 40px; background: var(--secondary); color: var(--dark);">1. Click Here to Pay First</a>
+            </div>
+
             <form id="paymentForm" class="grid-2">
                 <div class="form-group">
                     <label>Full Name *</label>
@@ -204,12 +197,11 @@
                     <input type="email" id="d_email" required placeholder="For tax receipt">
                 </div>
                 <div class="form-group">
-                    <label>Amount (₹) * <span style="font-weight: normal; color: #888; font-size: 0.85rem;">(Minimum ₹5)</span></label>
+                    <label>Amount Paid (₹) * <span style="font-weight: normal; color: #888; font-size: 0.85rem;">(Minimum ₹5)</span></label>
                     <input type="number" id="d_amount" required placeholder="e.g. 100" min="5">
                 </div>
                 <div class="form-group" style="display: flex; flex-direction: column; justify-content: flex-end;">
-                    <button type="submit" class="btn" id="payBtn" style="width: 100%; height: 50px; font-size: 1.1rem; margin-bottom: 10px;">Pay Securely via Razorpay</button>
-                    <a href="https://razorpay.me/@byashish" target="_blank" class="btn btn-outline" style="width: 100%; height: 45px; display: flex; justify-content: center; align-items: center; font-size: 0.9rem;">UPI / Direct Link Alternative</a>
+                    <button type="submit" class="btn" id="payBtn" style="width: 100%; height: 50px; font-size: 1.1rem;">2. Submit Payment Details</button>
                 </div>
             </form>
             <p id="payStatus" style="text-align: center; margin-top: 15px; font-weight: bold;"></p>
@@ -237,8 +229,8 @@
                     <div class="faq-answer">Yes, all donations are 80G tax-exempt. You will automatically receive a receipt on your registered email address.</div>
                 </div>
                 <div class="faq-item">
-                    <div class="faq-question" onclick="toggleFaq(this)">Is my payment secure? <span>+</span></div>
-                    <div class="faq-answer">We use Razorpay, India's leading and most trusted payment gateway with bank-level security and UPI support.</div>
+                    <div class="faq-question" onclick="toggleFaq(this)">How do I get on the leaderboard? <span>+</span></div>
+                    <div class="faq-answer">Simply click the payment link, complete your payment, and fill out the details form above. You will be added instantly!</div>
                 </div>
             </section>
             
@@ -283,12 +275,10 @@
     <footer>
         <h3 style="margin-bottom: 10px; color: var(--secondary);">HopeFoundation.</h3>
         <p style="color: #ccc; font-size: 0.9rem; margin-bottom: 20px;">Empowering specially-abled children across India.</p>
-        <p>&copy; 2026 Hope Foundation.</p>
+        <p>&copy; 2026 Hope Foundation. Developed by Ashish.</p>
     </footer>
 
     <script>
-        const RAZORPAY_KEY = "{{ razorpay_key_id }}";
-
         // Scroll Animation Logic
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => { if(entry.isIntersecting) entry.target.classList.add('visible'); });
@@ -308,48 +298,39 @@
             fetchLeaderboard();
             startLatestDonorCheck();
 
-            // Razorpay Payment Handler
+            // DIRECT DB SUBMISSION HANDLER (No API)
             document.getElementById('paymentForm').addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const btn = document.getElementById('payBtn');
                 const status = document.getElementById('payStatus');
-                btn.innerText = "Processing..."; btn.disabled = true;
+                btn.innerText = "Submitting..."; btn.disabled = true;
 
-                const donor_name = document.getElementById('d_name').value;
-                const donor_email = document.getElementById('d_email').value;
-                const amount = document.getElementById('d_amount').value;
+                const data = {
+                    name: document.getElementById('d_name').value,
+                    email: document.getElementById('d_email').value,
+                    amount: document.getElementById('d_amount').value
+                };
 
                 try {
-                    const orderRes = await fetch('/api/create_order', {
-                        method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ amount: amount })
+                    const res = await fetch('/api/submit_donation', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify(data)
                     });
-                    const orderData = await orderRes.json();
-                    if(orderData.error) throw new Error(orderData.error);
-
-                    const options = {
-                        "key": RAZORPAY_KEY, "amount": orderData.amount, "currency": "INR", "name": "Hope Foundation",
-                        "description": "Donation", "order_id": orderData.order_id,
-                        "handler": async function (response){
-                            status.innerText = "Verifying payment..."; status.style.color = "orange";
-                            const verifyRes = await fetch('/api/verify_payment', {
-                                method: 'POST', headers: {'Content-Type': 'application/json'},
-                                body: JSON.stringify({ razorpay_payment_id: response.razorpay_payment_id, razorpay_order_id: response.razorpay_order_id, razorpay_signature: response.razorpay_signature, donor_name: donor_name, donor_email: donor_email, amount: amount })
-                            });
-                            const verifyData = await verifyRes.json();
-                            if(verifyData.status === 'success'){
-                                status.style.color = "green"; status.innerText = "Success! You are on the leaderboard.";
-                                document.getElementById('paymentForm').reset();
-                                fetchStats(); fetchLeaderboard(); checkLatestDonor(); // Force toast update
-                            } else {
-                                status.style.color = "red"; status.innerText = "Verification failed.";
-                            }
-                        },
-                        "prefill": { "name": donor_name, "email": donor_email },
-                        "theme": { "color": "#4A90E2" }
-                    };
-                    const rzp = new Razorpay(options); rzp.open();
-                } catch (err) { alert("Error: " + err.message); } 
-                finally { btn.innerText = "Pay Securely via Razorpay"; btn.disabled = false; }
+                    const result = await res.json();
+                    
+                    if(result.status === 'success'){
+                        status.style.color = "green"; status.innerText = "Thank you! You have been added to the Wall of Heroes.";
+                        document.getElementById('paymentForm').reset();
+                        fetchStats(); fetchLeaderboard(); checkLatestDonor();
+                    } else {
+                        status.style.color = "red"; status.innerText = "Error submitting details.";
+                    }
+                } catch (err) {
+                    status.style.color = "red"; status.innerText = "Network Error.";
+                } finally {
+                    btn.innerText = "2. Submit Payment Details"; btn.disabled = false;
+                }
             });
 
             // Support Ticket
@@ -378,7 +359,6 @@
             data.forEach((d, i) => { tbody.innerHTML += `<tr><td><strong>#${i + 1}</strong></td><td>${d.name}</td><td style="color:var(--primary);font-weight:bold;">₹${d.amount.toLocaleString('en-IN')}</td><td>${new Date(d.date).toLocaleDateString()}</td></tr>`; });
         }
 
-        // REAL "LATEST DONOR" TOAST LOGIC
         let lastDonationId = null;
         async function checkLatestDonor() {
             try {
@@ -395,11 +375,11 @@
             } catch (e) { console.log(e); }
         }
         function startLatestDonorCheck() {
-            checkLatestDonor(); // Check immediately
-            setInterval(checkLatestDonor, 10000); // Poll every 10 seconds silently
+            checkLatestDonor();
+            setInterval(checkLatestDonor, 10000);
         }
 
-        // --- BUG-FREE LIVE CHAT ---
+        // Live Chat Logic
         let chatSessionId = localStorage.getItem('chatSessionId');
         let chatPollInterval;
         let loadedMessageCount = 0; 
@@ -457,7 +437,6 @@
             if(!text || !chatSessionId) return;
             input.value = '';
             
-            // Optimistic UI update
             document.getElementById('chatBody').innerHTML += `<div class="msg user"><span class="msg-label">👤 You</span>${text}</div>`;
             document.getElementById('chatBody').scrollTop = document.getElementById('chatBody').scrollHeight;
             loadedMessageCount++; 
