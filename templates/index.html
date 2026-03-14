@@ -125,6 +125,7 @@
             .glass-card { padding: 20px; }
             h2.section-title { font-size: 2rem; }
             .grid-2 { display: flex; flex-direction: column; gap: 20px; }
+            .form-group[style*="grid-column: span 2"] { grid-column: auto !important; }
             .chat-widget { bottom: 15px; right: 15px; }
             .chat-window { width: calc(100vw - 30px); right: 0; bottom: 70px; height: 60vh; }
             .toast { left: 15px; right: 15px; bottom: -100px; justify-content: center; text-align: center; }
@@ -208,13 +209,18 @@
                 <span class="en">See the real lives that your donations are changing across India.</span>
                 <span class="hi">उन वास्तविक जीवन को देखें जिन्हें आपका दान बदल रहा है।</span>
             </p>
-            <div id="storiesContainer" class="story-grid"></div>
+            <div id="storiesContainer" class="story-grid">
+                </div>
         </section>
 
-        <section class="glass-card text-center fade-up" style="background: linear-gradient(135deg, #e0f2fe 0%, #d1fae5 100%); border: none;">
-            <h2 style="color: var(--dark);">Our Collective Impact</h2>
-            <h1 style="font-size: 3.5rem; color: var(--primary); margin: 10px 0;">₹<span id="totalAmount">0</span></h1>
-            <p style="font-size: 1.2rem;">Raised with the love of <span id="totalDonors" style="font-weight:bold; color: var(--dark);">0</span> generous donors</p>
+        <section id="gallery" class="fade-up" style="margin-bottom: 60px;">
+            <h2 class="section-title"><span class="en">Where Your</span><span class="hi">आपका</span> <span><span class="en">Money Goes</span><span class="hi">पैसा कहाँ जाता है</span></span></h2>
+            <div class="gallery">
+                <img src="https://www.sharing4good.org/sites/default/files/styles/article_image/public/field/image/DSC_3664.JPG" alt="World Disabled Day - Indian Family">
+                <img src="https://www.skynettechnologies.com/sites/default/files/special-needs-children-support-programs-india.jpg" alt="Special Needs Children Support Programs India">
+                <img src="https://images.livemint.com/img/2021/12/07/original/India-International-Day-of-Persons-with-Disabilities-9_1638887870401.jpg" alt="Persons with Disabilities India">
+                <img src="https://www.shutterstock.com/image-photo/happy-young-brother-playing-his-260nw-2173952411.jpg" alt="Happy Young Brother Playing">
+            </div>
         </section>
 
         <section id="donate" class="glass-card fade-up" style="border: 2px solid var(--primary);">
@@ -263,7 +269,10 @@
                     
                     <div class="checkbox-container">
                         <input type="checkbox" id="verifyCheck" onchange="toggleSubmitButton()">
-                        <label for="verifyCheck">I confirm I have made the payment, uploaded the correct screenshot, and the Transaction ID is 100% correct.</label>
+                        <label for="verifyCheck">
+                            <span class="en">I confirm I have made the payment, uploaded the correct screenshot, and the Transaction ID is 100% correct.</span>
+                            <span class="hi">मैं पुष्टि करता हूं कि मैंने भुगतान कर दिया है और ट्रांजेक्शन आईडी 100% सही है।</span>
+                        </label>
                     </div>
                     
                     <button type="submit" class="btn" id="payBtn" disabled style="width: 100%; height: 60px; font-size: 1.2rem;">
@@ -279,15 +288,21 @@
             <h2 class="section-title"><span class="en">Wall of</span><span class="hi">दानवीरों की</span> <span><span class="en">Heroes</span><span class="hi">सूची</span></span></h2>
             <div style="overflow-x: auto; padding-bottom: 10px;">
                 <table>
-                    <thead><tr><th>Rank</th><th>Donor Name</th><th>Amount</th><th>Date</th><th>Share Impact</th></tr></thead>
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Donor Name</th>
+                            <th>Amount</th>
+                            <th>Date</th>
+                            <th>Share Impact</th>
+                        </tr>
+                    </thead>
                     <tbody id="leaderboardBody"></tbody>
                 </table>
             </div>
         </section>
 
     </div>
-
-    <div id="liveToast" class="toast">🎉 <span id="toastName">Someone</span> just donated <span class="amount" id="toastAmount">₹0</span>!</div>
 
     <div class="chat-widget">
         <div class="chat-window" id="chatWindow">
@@ -316,14 +331,20 @@
     </footer>
 
     <script>
+        // Animations
         const observer = new IntersectionObserver((entries) => { entries.forEach(entry => { if(entry.isIntersecting) entry.target.classList.add('visible'); }); }, { threshold: 0.1 });
         document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
 
+        // Mobile Menu
         function toggleMenu() { document.getElementById('navLinks').classList.toggle('active'); }
+        
+        // Language Toggle Logic
         function toggleLanguage() { document.body.classList.toggle('lang-hi'); }
+
+        // Form Submit Enable
         function toggleSubmitButton() { document.getElementById('payBtn').disabled = !document.getElementById('verifyCheck').checked; }
 
-        // COMPRESSION ENGINE FOR SCREENSHOTS
+        // IMAGE COMPRESSION
         async function compressImage(file) {
             return new Promise((resolve) => {
                 const reader = new FileReader();
@@ -333,24 +354,26 @@
                     img.src = event.target.result;
                     img.onload = () => {
                         const canvas = document.createElement('canvas');
-                        const MAX_WIDTH = 600; // Small size for fast DB storage
+                        const MAX_WIDTH = 600; 
                         const scaleSize = MAX_WIDTH / img.width;
                         canvas.width = MAX_WIDTH;
                         canvas.height = img.height * scaleSize;
                         const ctx = canvas.getContext('2d');
                         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                        resolve(canvas.toDataURL('image/jpeg', 0.6)); // Compress to 60% quality
+                        resolve(canvas.toDataURL('image/jpeg', 0.6)); 
                     }
                 };
             });
         }
 
         document.addEventListener("DOMContentLoaded", () => {
-            fetchLeaderboard(); fetchStories(); fetchStats(); startLatestDonorCheck();
+            fetchLeaderboard();
+            fetchStories();
 
             document.getElementById('paymentForm').addEventListener('submit', async (e) => {
                 e.preventDefault();
-                const btn = document.getElementById('payBtn'); const status = document.getElementById('payStatus');
+                const btn = document.getElementById('payBtn');
+                const status = document.getElementById('payStatus');
                 btn.innerText = "Compressing & Submitting..."; btn.disabled = true;
 
                 const txn_data_string = "TXN ID: " + document.getElementById('d_txn_id').value;
@@ -373,93 +396,162 @@
                     const res = await fetch('/api/submit_donation', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data) });
                     const result = await res.json();
                     if(result.status === 'success'){
-                        status.style.color = "green"; status.innerText = "Thank you! Pending admin verification.";
-                        document.getElementById('paymentForm').reset(); document.getElementById('verifyCheck').checked = false; 
+                        status.style.color = "green"; 
+                        status.innerText = "Thank you! Pending verification.";
+                        document.getElementById('paymentForm').reset();
+                        document.getElementById('verifyCheck').checked = false; 
                     } else { status.style.color = "red"; status.innerText = "Error."; btn.disabled = false; }
                 } catch (err) { status.style.color = "red"; status.innerText = "Error."; btn.disabled = false; } 
                 finally { btn.innerText = "Final Submit 🚀"; }
             });
         });
 
-        async function fetchStats() {
-            const res = await fetch('/api/stats'); const data = await res.json();
-            document.getElementById('totalAmount').innerText = data.total_amount.toLocaleString('en-IN');
-            document.getElementById('totalDonors').innerText = data.total_donors;
-        }
-
+        // FETCH SUCCESS STORIES
         async function fetchStories() {
             try {
-                const res = await fetch('/api/stories'); const stories = await res.json();
+                const res = await fetch('/api/stories');
+                const stories = await res.json();
                 const container = document.getElementById('storiesContainer');
-                if(stories.length === 0) { container.innerHTML = '<p style="text-align:center; width:100%; color:#888;">No stories added yet. Check back soon!</p>'; return; }
+                if(stories.length === 0) {
+                    container.innerHTML = '<p style="text-align:center; width:100%; color:#888;">No stories added yet. Check back soon!</p>';
+                    return;
+                }
                 container.innerHTML = '';
                 stories.forEach(s => {
-                    container.innerHTML += `<div class="story-card"><img src="${s.image_url}" alt="Story Image" class="story-img"><div class="story-body"><div class="story-title">${s.title}</div><div class="story-text">${s.content}</div></div></div>`;
+                    container.innerHTML += `
+                    <div class="story-card">
+                        <img src="${s.image_url}" alt="Story Image" class="story-img">
+                        <div class="story-body">
+                            <div class="story-title">${s.title}</div>
+                            <div class="story-text">${s.content}</div>
+                        </div>
+                    </div>`;
                 });
-            } catch(e) { console.error(e); }
+            } catch(e) { console.error("Error loading stories"); }
         }
 
+        // LEADERBOARD WITH DONOR BADGES
         async function fetchLeaderboard() {
             const res = await fetch('/api/leaderboard'); const data = await res.json();
             const tbody = document.getElementById('leaderboardBody'); tbody.innerHTML = '';
             
             data.forEach((d, i) => { 
+                // BADGE LOGIC
                 let badgeClass = 'badge-bronze'; let badgeIcon = '🥉 Hero';
                 if(d.amount >= 5000) { badgeClass = 'badge-gold'; badgeIcon = '🥇 VIP Gold'; }
                 else if (d.amount >= 1000) { badgeClass = 'badge-silver'; badgeIcon = '🥈 Silver'; }
 
-                tbody.innerHTML += `<tr>
+                tbody.innerHTML += `
+                <tr>
                     <td><strong>#${i + 1}</strong></td>
-                    <td><strong>${d.name}</strong> <span class="donor-badge ${badgeClass}">${badgeIcon}</span></td>
+                    <td>
+                        <strong>${d.name}</strong> 
+                        <span class="donor-badge ${badgeClass}">${badgeIcon}</span>
+                    </td>
                     <td style="color:var(--primary);font-weight:bold;">₹${d.amount.toLocaleString('en-IN')}</td>
                     <td>${new Date(d.date).toLocaleDateString()}</td>
-                    <td><button onclick="generateCertificate('${d.name}', ${d.amount})" class="btn" style="padding: 5px 10px; font-size: 0.8rem; background: var(--secondary); color: var(--dark);">📸 Share</button></td>
+                    <td>
+                        <button onclick="generateCertificate('${d.name}')" class="btn" style="padding: 5px 10px; font-size: 0.8rem; background: var(--secondary); color: var(--dark);">
+                            📸 Share
+                        </button>
+                    </td>
                 </tr>`; 
             });
         }
 
-        function generateCertificate(name, amount) {
-            const canvas = document.getElementById('certCanvas'); canvas.width = 1080; canvas.height = 1080;
+        // PROFESSIONAL SHARE YOUR IMPACT GENERATOR (No Amount)
+        function generateCertificate(name) {
+            const canvas = document.getElementById('certCanvas');
+            canvas.width = 1080; canvas.height = 1080; 
             const ctx = canvas.getContext('2d');
-            let grad = ctx.createLinearGradient(0, 0, 1080, 1080); grad.addColorStop(0, '#1f2937'); grad.addColorStop(1, '#4A90E2');
-            ctx.fillStyle = grad; ctx.fillRect(0, 0, 1080, 1080);
-            ctx.strokeStyle = '#50E3C2'; ctx.lineWidth = 15; ctx.strokeRect(40, 40, 1000, 1000);
-            ctx.fillStyle = '#ffffff'; ctx.textAlign = 'center'; ctx.font = 'bold 60px Arial'; ctx.fillText('Hope Foundation', 540, 180);
-            ctx.fillStyle = '#50E3C2'; ctx.font = 'italic 50px Arial'; ctx.fillText('Certificate of Appreciation', 540, 270);
-            ctx.fillStyle = '#ffffff'; ctx.font = '40px Arial'; ctx.fillText('This is proudly presented to', 540, 450);
-            ctx.font = 'bold 90px Arial'; ctx.fillStyle = '#ffd700'; ctx.fillText(name.toUpperCase(), 540, 570);
-            ctx.fillStyle = '#ffffff'; ctx.font = '40px Arial'; ctx.fillText(`For their generous contribution of ₹${amount}`, 540, 700);
-            ctx.fillText('to empower specially-abled children in India.', 540, 760);
-            ctx.font = 'bold 30px Arial'; ctx.fillStyle = '#aaaaaa'; ctx.fillText('Join the movement at www.hopefoundation.com', 540, 950);
-            const link = document.createElement('a'); link.download = `HopeFoundation_Impact_${name}.png`; link.href = canvas.toDataURL('image/png'); link.click();
-            alert("Your certificate is downloading! Share it on your WhatsApp Status!");
+
+            // Premium Navy Blue to Slate Gradient
+            let grad = ctx.createLinearGradient(0, 0, 1080, 1080);
+            grad.addColorStop(0, '#0f2027');
+            grad.addColorStop(0.5, '#203a43');
+            grad.addColorStop(1, '#2c5364');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, 1080, 1080);
+
+            // Elegant Gold Double Borders
+            ctx.strokeStyle = '#D4AF37'; // Classic Gold
+            ctx.lineWidth = 10;
+            ctx.strokeRect(40, 40, 1000, 1000);
+            ctx.lineWidth = 2;
+            ctx.strokeRect(55, 55, 970, 970);
+
+            // Title
+            ctx.fillStyle = '#ffffff';
+            ctx.textAlign = 'center';
+            ctx.font = 'bold 70px "Times New Roman", Times, serif';
+            ctx.fillText('HOPE FOUNDATION', 540, 200);
+            
+            // Subtitle
+            ctx.fillStyle = '#D4AF37';
+            ctx.font = 'italic 45px Georgia, serif';
+            ctx.fillText('Certificate of Appreciation', 540, 300);
+            
+            // Body Text
+            ctx.fillStyle = '#dddddd';
+            ctx.font = '35px Arial';
+            ctx.fillText('THIS IS PROUDLY PRESENTED TO', 540, 480);
+
+            // Name (Gold and Large)
+            ctx.font = 'bold 90px "Times New Roman", Times, serif';
+            ctx.fillStyle = '#D4AF37'; 
+            ctx.fillText(name.toUpperCase(), 540, 600);
+
+            // Cause Text (Amount Removed)
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '35px Arial';
+            ctx.fillText('For their generous support and invaluable contribution', 540, 720);
+            ctx.fillText('to empowering specially-abled children in India.', 540, 780);
+
+            // Signature Line
+            ctx.beginPath();
+            ctx.moveTo(340, 900);
+            ctx.lineTo(740, 900);
+            ctx.strokeStyle = '#D4AF37';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            
+            ctx.font = 'italic 25px Georgia';
+            ctx.fillStyle = '#aaaaaa';
+            ctx.fillText('Authorized Signature', 540, 940);
+
+            // Highlighted URL at the bottom
+            ctx.font = 'bold 28px Arial';
+            ctx.fillStyle = '#50E3C2'; // Bright Cyan color to look like a link
+            ctx.fillText('hope-foundation-empowering-children.onrender.com', 540, 1020);
+
+            // Trigger Download
+            const link = document.createElement('a');
+            link.download = `HopeFoundation_Impact_${name}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            alert("Your premium certificate is downloading! Share it on Instagram or WhatsApp and tag our website link!");
         }
 
-        let lastDonationId = null;
-        async function checkLatestDonor() {
-            try {
-                const res = await fetch('/api/latest_donation'); const data = await res.json();
-                if(data.id && data.id !== lastDonationId) {
-                    lastDonationId = data.id; const toast = document.getElementById('liveToast');
-                    document.getElementById('toastName').innerText = data.name; document.getElementById('toastAmount').innerText = `₹${data.amount.toLocaleString('en-IN')}`;
-                    toast.classList.add('show'); setTimeout(() => { toast.classList.remove('show'); }, 5000);
-                }
-            } catch (e) {}
-        }
-        function startLatestDonorCheck() { checkLatestDonor(); setInterval(checkLatestDonor, 10000); }
-
-        let chatSessionId = localStorage.getItem('chatSessionId'); let chatPollInterval; let loadedMessageCount = 0; 
+        // Live Chat Logic
+        let chatSessionId = localStorage.getItem('chatSessionId');
+        let chatPollInterval; let loadedMessageCount = 0; 
         function toggleChat() {
-            const win = document.getElementById('chatWindow'); win.style.display = win.style.display === 'flex' ? 'none' : 'flex';
-            if(win.style.display === 'flex' && chatSessionId) { document.getElementById('chatStartForm').style.display = 'none'; document.getElementById('chatUi').style.display = 'flex'; syncChat(); if(!chatPollInterval) chatPollInterval = setInterval(syncChat, 3000); } 
-            else { clearInterval(chatPollInterval); chatPollInterval = null; }
+            const win = document.getElementById('chatWindow');
+            win.style.display = win.style.display === 'flex' ? 'none' : 'flex';
+            if(win.style.display === 'flex' && chatSessionId) {
+                document.getElementById('chatStartForm').style.display = 'none';
+                document.getElementById('chatUi').style.display = 'flex';
+                syncChat(); if(!chatPollInterval) chatPollInterval = setInterval(syncChat, 3000);
+            } else { clearInterval(chatPollInterval); chatPollInterval = null; }
         }
         document.getElementById('chatStartForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const data = { name: document.getElementById('c_name').value, email: document.getElementById('c_email').value };
-            const res = await fetch('/api/chat/start', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) }); const result = await res.json();
+            const res = await fetch('/api/chat/start', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) });
+            const result = await res.json();
             chatSessionId = result.session_id; localStorage.setItem('chatSessionId', chatSessionId);
-            document.getElementById('chatStartForm').style.display = 'none'; document.getElementById('chatUi').style.display = 'flex';
+            document.getElementById('chatStartForm').style.display = 'none';
+            document.getElementById('chatUi').style.display = 'flex';
             syncChat(); chatPollInterval = setInterval(syncChat, 3000);
         });
         async function syncChat() {
@@ -467,14 +559,24 @@
             const res = await fetch(`/api/chat/sync/${chatSessionId}`); const messages = await res.json();
             if(messages.length > loadedMessageCount) {
                 const body = document.getElementById('chatBody'); const newMessages = messages.slice(loadedMessageCount);
-                newMessages.forEach(m => { let cssClass = '', label = ''; if (m.sender === 'user') { cssClass = 'user'; label = '👤 You'; } else if (m.sender === 'bot') { cssClass = 'bot'; label = '🤖 Assistant'; } else { cssClass = 'admin'; label = '👨‍💻 Support'; } body.innerHTML += `<div class="msg ${cssClass}"><span class="msg-label">${label}</span>${m.message}</div>`; });
+                newMessages.forEach(m => {
+                    let cssClass = '', label = '';
+                    if (m.sender === 'user') { cssClass = 'user'; label = '👤 You'; } 
+                    else if (m.sender === 'bot') { cssClass = 'bot'; label = '🤖 Assistant'; } 
+                    else { cssClass = 'admin'; label = '👨‍💻 Support'; }
+                    body.innerHTML += `<div class="msg ${cssClass}"><span class="msg-label">${label}</span>${m.message}</div>`;
+                });
                 body.scrollTop = body.scrollHeight; loadedMessageCount = messages.length;
             }
         }
         async function sendChatMessage() {
-            const input = document.getElementById('chatMsgInput'); const text = input.value.trim(); if(!text || !chatSessionId) return; input.value = '';
-            document.getElementById('chatBody').innerHTML += `<div class="msg user"><span class="msg-label">👤 You</span>${text}</div>`; document.getElementById('chatBody').scrollTop = document.getElementById('chatBody').scrollHeight; loadedMessageCount++; 
-            await fetch('/api/chat/send', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ session_id: chatSessionId, message: text }) }); syncChat();
+            const input = document.getElementById('chatMsgInput'); const text = input.value.trim();
+            if(!text || !chatSessionId) return; input.value = '';
+            document.getElementById('chatBody').innerHTML += `<div class="msg user"><span class="msg-label">👤 You</span>${text}</div>`;
+            document.getElementById('chatBody').scrollTop = document.getElementById('chatBody').scrollHeight;
+            loadedMessageCount++; 
+            await fetch('/api/chat/send', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ session_id: chatSessionId, message: text }) });
+            syncChat();
         }
         function handleChatEnter(e) { if(e.key === 'Enter') sendChatMessage(); }
     </script>
