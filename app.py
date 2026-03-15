@@ -27,7 +27,7 @@ def init_db():
     c.execute('''CREATE TABLE IF NOT EXISTS chat_messages (id SERIAL PRIMARY KEY, session_id TEXT, sender TEXT, message TEXT, timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
     c.execute('''CREATE TABLE IF NOT EXISTS stories (id SERIAL PRIMARY KEY, title TEXT NOT NULL, content TEXT NOT NULL, image_url TEXT NOT NULL, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
     
-    # NEW: Level 4 Tables
+    # NEW: Level 4 Tables (Children, Settings, Chatbot)
     c.execute('''CREATE TABLE IF NOT EXISTS children (id SERIAL PRIMARY KEY, name TEXT, age INTEGER, condition TEXT, description TEXT, image_url TEXT, goal_amount INTEGER, raised_amount INTEGER DEFAULT 0, status TEXT DEFAULT 'Active')''')
     c.execute('''CREATE TABLE IF NOT EXISTS chatbot_rules (id SERIAL PRIMARY KEY, keyword TEXT, response TEXT)''')
     c.execute('''CREATE TABLE IF NOT EXISTS campaign_settings (id INTEGER PRIMARY KEY, goal_amount INTEGER DEFAULT 100000, urgency_msg TEXT DEFAULT 'Urgent: 42 children are waiting for immediate medical support!', med_pct INTEGER DEFAULT 40, edu_pct INTEGER DEFAULT 35, ther_pct INTEGER DEFAULT 15, food_pct INTEGER DEFAULT 10, yt_url TEXT DEFAULT 'https://www.youtube.com/embed/dQw4w9WgXcQ', ig_url TEXT DEFAULT '', hero_id INTEGER, stats_children INTEGER DEFAULT 320, stats_medical INTEGER DEFAULT 180, stats_kits INTEGER DEFAULT 500)''')
@@ -39,7 +39,7 @@ def init_db():
         # Insert default chatbot rules
         c.execute("INSERT INTO chatbot_rules (keyword, response) VALUES ('donate', 'You can donate securely by clicking the Donate button at the top of the page. We accept UPI, Cards, and NetBanking!')")
         c.execute("INSERT INTO chatbot_rules (keyword, response) VALUES ('safe', 'Yes! We use bank-level 256-bit encryption. All payments are 100% secure.')")
-        c.execute("INSERT INTO chatbot_rules (keyword, response) VALUES ('80g', 'Yes, all donations are fully 80G tax-exempt. You can download your receipt instantly.')")
+        c.execute("INSERT INTO chatbot_rules (keyword, response) VALUES ('80g', 'Yes, all donations are fully 80G tax-exempt. You can download your receipt instantly from the Wall of Heroes.')")
 
     conn.commit()
     conn.close()
@@ -55,7 +55,7 @@ def login_required(f):
     return decorated_function
 
 # ==========================================
-# PUBLIC ROUTES & PWA
+# PUBLIC ROUTES & PWA & SEO
 # ==========================================
 @app.route('/')
 def index():
@@ -76,6 +76,11 @@ def service_worker():
     self.addEventListener('fetch', e => { e.respondWith(caches.match(e.request).then(r => r || fetch(e.request))); });
     """
     return Response(sw_code, mimetype='application/javascript')
+
+@app.route('/sitemap.xml')
+def sitemap():
+    xml = '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://hope-foundation-empowering-children.onrender.com/</loc><changefreq>daily</changefreq><priority>1.0</priority></url></urlset>'
+    return Response(xml, mimetype='application/xml')
 
 # --- RECEIPTS ---
 @app.route('/receipt/<int:id>')
@@ -115,8 +120,16 @@ def public_data():
     children = c.fetchall()
     c.execute("SELECT keyword, response FROM chatbot_rules")
     chat_rules = c.fetchall()
-    c.execute("SELECT id, name, amount FROM donations WHERE id = %s", (settings['hero_id'],)) if settings['hero_id'] else None
-    hero = c.fetchone() if settings['hero_id'] else None
+    hero = None
+    if settings['hero_id']:
+        c.execute("SELECT id, name, amount FROM donations WHERE id = %s AND status='approved'", (settings['hero_id'],))
+        hero = c.fetchone()
+    
+    # Fallback hero if manual is not set
+    if not hero:
+        c.execute("SELECT id, name, amount FROM donations WHERE status = 'approved' ORDER BY amount DESC LIMIT 1")
+        hero = c.fetchone()
+
     conn.close()
     
     return jsonify({
@@ -161,16 +174,6 @@ def get_stories():
     conn.close()
     return jsonify(s)
 
-@app.route('/api/submit_ticket', methods=['POST'])
-def submit_ticket():
-    data = request.json
-    conn = get_db()
-    c = conn.cursor()
-    c.execute("INSERT INTO tickets (name, email, subject, message) VALUES (%s, %s, %s, %s)", (data['name'], data['email'], data['subject'], data['message']))
-    conn.commit()
-    conn.close()
-    return jsonify({"status": "success"})
-
 @app.route('/api/chat/start', methods=['POST'])
 def start_chat():
     data = request.json
@@ -189,6 +192,20 @@ def send_message():
     conn = get_db()
     c = conn.cursor()
     c.execute("INSERT INTO chat_messages (session_id, sender, message) VALUES (%s, %s, %s)", (data['session_id'], 'user', data['message']))
+    
+    # 10. SMART CHATBOT LOGIC
+    c.execute("SELECT keyword, response FROM chatbot_rules")
+    rules = c.fetchall()
+    bot_reply = None
+    user_msg = data['message'].lower()
+    for rule in rules:
+        if rule[0].lower() in user_msg:
+            bot_reply = rule[1]
+            break
+            
+    if bot_reply:
+        c.execute("INSERT INTO chat_messages (session_id, sender, message) VALUES (%s, %s, %s)", (data['session_id'], 'bot', bot_reply))
+
     conn.commit()
     conn.close()
     return jsonify({"status": "success"})
@@ -327,4 +344,4 @@ def logout():
     session.pop('admin_logged_in', None); return redirect(url_for('admin_login'))
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)    
+    app.run(debug=True, port=5000)
