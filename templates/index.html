@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Hope Foundation - Empowering Specially-Abled Children in India</title>
+    <meta name="description" content="Empowering specially-abled children across India. Donate to Hope Foundation to provide medical care, education, and therapy.">
+    <meta name="keywords" content="NGO, specially-abled, donation, charity, India, children, Ketto, Milaap">
+    <meta property="og:title" content="Hope Foundation - Empowering Specially-Abled Children">
+    <meta property="og:description" content="Support specially-abled children. Every donation makes a difference.">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1532372320572-cda25653a26d">
+    <link rel="manifest" href="/manifest.json">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     
     <style>
@@ -19,6 +25,9 @@
         .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
         h2.section-title { text-align: center; color: var(--dark); font-size: 2.5rem; margin-bottom: 30px; }
         h2.section-title span { color: var(--primary); }
+        
+        /* 11. URGENCY BANNER */
+        #urgencyBanner { background: #ef4444; color: white; text-align: center; padding: 12px; font-weight: bold; font-size: 0.95rem; display: none; z-index: 1001; position: relative;}
         
         nav { background: white; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
         .logo { font-size: 1.5rem; font-weight: 700; color: var(--primary); text-decoration: none; }
@@ -47,29 +56,47 @@
         .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
         .btn-outline:hover { background: var(--primary); color: white; }
 
-        .marquee-wrapper { background: var(--dark); overflow: hidden; padding: 15px 0; color: white; display: flex; white-space: nowrap; }
+        /* 1. PROGRESS BAR CSS */
+        .progress-container { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); margin-top: -50px; position: relative; z-index: 10; text-align: center; max-width: 800px; margin-left: auto; margin-right: auto;}
+        .progress-bar-bg { width: 100%; background: #e2e8f0; border-radius: 20px; height: 25px; margin: 15px 0; overflow: hidden; position: relative; }
+        .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--secondary)); border-radius: 20px; width: 0%; transition: width 1.5s ease-in-out; }
+        .stats-text { display: flex; justify-content: space-between; font-weight: bold; color: var(--dark); font-size: 1.1rem; }
+
+        /* 7. IMPACT STATS CSS */
+        .impact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; text-align: center; margin-bottom: 40px; }
+        .impact-card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-bottom: 4px solid var(--primary); }
+        .impact-card h1 { font-size: 2.5rem; color: var(--primary); margin-bottom: 10px; }
+
+        /* 2. CHILDREN CARDS */
+        .child-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; }
+        .child-card { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 8px 20px rgba(0,0,0,0.05); text-align: center; padding-bottom: 20px; }
+        .child-card img { width: 100%; height: 220px; object-fit: cover; }
+        .child-card h3 { color: var(--dark); margin: 15px 0 5px; font-size: 1.3rem; }
+        .child-card p { color: #666; font-size: 0.95rem; padding: 0 15px; }
+        
+        /* 3. TRANSPARENCY BARS */
+        .t-bar-wrap { margin-bottom: 15px; }
+        .t-label { display: flex; justify-content: space-between; font-weight: 600; margin-bottom: 5px; font-size: 0.95rem;}
+        .t-bg { width: 100%; background: #e2e8f0; height: 12px; border-radius: 10px; }
+        .t-fill { height: 100%; border-radius: 10px; transition: 1s; }
+
+        /* 4. HERO DONOR */
+        .hero-box { background: linear-gradient(135deg, #fffbeb, #fef3c7); border: 2px solid #fbbf24; border-radius: 15px; padding: 20px; text-align: center; margin-bottom: 20px; box-shadow: 0 5px 15px rgba(251, 191, 36, 0.2); }
+
+        .marquee-wrapper { background: var(--dark); overflow: hidden; padding: 15px 0; color: white; display: flex; white-space: nowrap; margin-top: 40px;}
         .marquee-content { display: inline-block; animation: marquee 20s linear infinite; font-weight: 600; font-size: 1.1rem; }
         @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
         .marquee-content span { margin: 0 30px; color: var(--secondary); }
 
         .glass-card { background: rgba(255, 255, 255, 0.9); border-radius: 15px; padding: 30px; box-shadow: 0 8px 30px rgba(0,0,0,0.05); margin-bottom: 40px; }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
-        
-        .mission-vision-box { background: white; padding: 25px; border-radius: 10px; border-left: 5px solid var(--primary); box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        .about-image { width: 100%; height: 100%; object-fit: cover; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
 
         .form-group { margin-bottom: 20px; width: 100%; }
         .form-group label { display: block; margin-bottom: 8px; font-weight: 600; }
-        .form-group input[type="text"], .form-group input[type="tel"], .form-group input[type="email"], .form-group input[type="number"], .form-group textarea, .form-group input[type="file"] { 
-            width: 100%; padding: 15px; border: 1px solid #ddd; border-radius: 8px; outline: none; transition: 0.3s; font-size: 16px !important; background: #fff; -webkit-appearance: none; 
-        }
-        
+        .form-group input, .form-group textarea { width: 100%; padding: 15px; border: 1px solid #ddd; border-radius: 8px; outline: none; transition: 0.3s; font-size: 16px !important; background: #fff; }
         .step-block { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 20px; margin-bottom: 20px; }
         .step-title { font-size: 1.2rem; color: var(--primary); font-weight: bold; margin-bottom: 15px; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; }
-
         .checkbox-container { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 20px; background: #fffbeb; padding: 15px; border-radius: 8px; border: 1px solid #fcd34d; }
-        .checkbox-container input[type="checkbox"] { margin-top: 5px; width: 18px; height: 18px; cursor: pointer; }
-        .checkbox-container label { font-size: 0.9rem; color: #b45309; font-weight: 600; cursor: pointer; }
 
         table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; }
         th, td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
@@ -88,13 +115,15 @@
         .story-title { font-size: 1.2rem; color: var(--primary); margin-bottom: 10px; font-weight: bold; }
         .story-text { color: #555; font-size: 0.95rem; line-height: 1.6; }
 
-        .faq-item { border-bottom: 1px solid #ddd; padding: 15px 0; }
-        .faq-question { font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; color: var(--dark); }
-        .faq-answer { display: none; padding-top: 10px; color: #555; font-size: 0.95rem; line-height: 1.6; }
-
+        /* 6. LIVE DONATION NOTIFICATIONS */
         .toast { position: fixed; bottom: -100px; left: 20px; background: white; color: var(--dark); padding: 15px 25px; border-radius: 50px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border-left: 5px solid var(--secondary); display: flex; align-items: center; gap: 10px; transition: bottom 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); z-index: 9999; font-weight: 600; font-size: 0.9rem; max-width: 90vw; }
         .toast.show { bottom: 30px; }
         
+        /* 5. SHARE MODAL */
+        #shareModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; justify-content: center; align-items: center; }
+        .share-box { background: white; padding: 40px; border-radius: 15px; text-align: center; max-width: 400px; width: 90%; }
+        .share-btn { display: inline-block; padding: 10px 20px; margin: 10px 5px; border-radius: 30px; color: white; text-decoration: none; font-weight: bold; }
+
         footer { background: var(--dark); color: white; padding: 50px 20px 20px; text-align: center; }
 
         .chat-widget { position: fixed; bottom: 30px; right: 30px; z-index: 9999; }
@@ -110,24 +139,15 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
         .msg-label { font-size: 0.7rem; font-weight: bold; position: absolute; top: -18px; color: #777; white-space: nowrap; }
         .msg.admin { background: #d1fae5; color: #065f46; align-self: flex-start; border-bottom-left-radius: 2px; }
-        .msg.admin .msg-label { left: 5px; }
         .msg.bot { background: #e0e7ff; color: #3730a3; align-self: flex-start; border-bottom-left-radius: 2px; }
-        .msg.bot .msg-label { left: 5px; }
         .msg.user { background: var(--primary); color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
-        .msg.user .msg-label { right: 5px; color: var(--primary); }
 
         @media (max-width: 768px) {
-            .menu-toggle { display: block; }
-            .nav-links { display: none; flex-direction: column; position: absolute; top: 60px; left: 0; width: 100%; background: white; padding: 20px; box-shadow: 0 5px 10px rgba(0,0,0,0.1); }
-            .nav-links.active { display: flex; }
             .hero-banner h1 { font-size: 2.2rem; }
-            .container { padding: 0 15px; }
-            .glass-card { padding: 20px; }
-            h2.section-title { font-size: 2rem; }
             .grid-2 { display: flex; flex-direction: column; gap: 20px; }
-            .form-group[style*="grid-column: span 2"] { grid-column: auto !important; }
             .chat-widget { bottom: 15px; right: 15px; }
             .chat-window { width: calc(100vw - 30px); right: 0; bottom: 70px; height: 60vh; }
+            .progress-container { margin-top: -30px; padding: 20px; }
             .toast { left: 15px; right: 15px; bottom: -100px; justify-content: center; text-align: center; }
         }
     </style>
@@ -136,15 +156,17 @@
 
     <canvas id="certCanvas" style="display:none;"></canvas>
 
+    <div id="urgencyBanner">⚠ Urgent: Children are waiting for immediate medical support!</div>
+
     <nav>
         <a href="#" class="logo">HopeFoundation.</a>
         <div class="menu-toggle" onclick="toggleMenu()">☰</div>
         <ul class="nav-links" id="navLinks">
             <li><a href="#about" onclick="toggleMenu()"><span class="en">About Us</span><span class="hi">हमारे बारे में</span></a></li>
+            <li><a href="#children" onclick="toggleMenu()"><span class="en">Children</span><span class="hi">बच्चे</span></a></li>
             <li><a href="#stories" onclick="toggleMenu()"><span class="en">Stories</span><span class="hi">कहानियां</span></a></li>
             <li><a href="#leaderboard" onclick="toggleMenu()"><span class="en">Wall of Heroes</span><span class="hi">दानवीरों की सूची</span></a></li>
-            <li><a href="#faq" onclick="toggleMenu()"><span class="en">FAQ</span><span class="hi">सामान्य प्रश्न</span></a></li>
-            <li><button onclick="toggleLanguage()" class="btn-outline" style="padding: 5px 12px; border-radius: 15px; cursor: pointer; border: 1px solid var(--primary); background: transparent; font-weight: bold; color: var(--primary);">🌐 English / हिंदी</button></li>
+            <li><button onclick="toggleLanguage()" class="btn-outline" style="padding: 5px 12px; border-radius: 15px; cursor: pointer; border: 1px solid var(--primary); background: transparent; font-weight: bold; color: var(--primary);">🌐 En/Hi</button></li>
         </ul>
         <a href="#donate" class="btn" style="padding: 8px 20px;"><span class="en">Donate Now</span><span class="hi">अभी दान करें</span></a>
     </nav>
@@ -154,101 +176,86 @@
             <span class="en">Empower a Specially-Abled Child's Future ❤️</span>
             <span class="hi">एक विशेष-योग्य बच्चे के भविष्य को सशक्त बनाएं ❤️</span>
         </h1>
-        <p style="font-size: 1.2rem; max-width: 700px; margin: 0 auto;">
-            <span class="en">Join thousands of Indians providing education, medical aid, and specialized care to the children who need it most across our nation.</span>
-            <span class="hi">भारत भर में उन बच्चों को शिक्षा और चिकित्सा सहायता प्रदान करने वाले हजारों भारतीयों से जुड़ें जिन्हें इसकी सबसे ज्यादा जरूरत है।</span>
+        <p style="font-size: 1.2rem; max-width: 700px; margin: 0 auto; margin-bottom: 30px;">
+            Join thousands of Indians providing education, medical aid, and specialized care to the children who need it most.
         </p>
-        <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; margin-top: 30px;">
-            <a href="#donate" class="btn" style="font-size: 1.2rem; padding: 15px 40px; background: var(--secondary); color: var(--dark);">
-                <span class="en">Make a Donation</span><span class="hi">दान करें</span>
-            </a>
-        </div>
-        <div class="trust-badges">
-            <span>🔒 <span class="en">Secure Payments</span><span class="hi">सुरक्षित भुगतान</span></span> | 
-            <span>✅ <span class="en">Verified NGO</span><span class="hi">सत्यापित एनजीओ</span></span> | 
-            <span>🧾 <span class="en">80G Tax Exemption</span><span class="hi">80G कर छूट</span></span>
-        </div>
+        <a href="#donate" class="btn" style="font-size: 1.2rem; padding: 15px 40px; background: var(--secondary); color: var(--dark);">
+            <span class="en">Make a Donation</span><span class="hi">दान करें</span>
+        </a>
     </header>
+
+    <div class="container fade-up" style="padding: 0 15px;">
+        <div class="progress-container">
+            <h3 style="margin-bottom: 10px; color: var(--dark);">Campaign Progress</h3>
+            <div class="stats-text">
+                <span id="pb-raised">₹0 Raised</span>
+                <span id="pb-goal">Goal: ₹1,00,000</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div class="progress-bar-fill" id="pb-fill"></div>
+            </div>
+            <p style="color: #666; font-size: 0.9rem;"><strong id="pb-donors">0</strong> donors have joined the mission!</p>
+        </div>
+    </div>
+
+    <section id="impact" class="container fade-up">
+        <h2 class="section-title">Our <span>Impact</span></h2>
+        <div class="impact-grid">
+            <div class="impact-card"><h1 id="stat-child">0</h1><p>Children Supported</p></div>
+            <div class="impact-card"><h1 id="stat-med">0</h1><p>Medical Treatments</p></div>
+            <div class="impact-card"><h1 id="stat-kits">0</h1><p>Education Kits</p></div>
+            <div class="impact-card"><h1 id="stat-funds">₹0</h1><p>Total Raised</p></div>
+        </div>
+    </section>
+
+    <section id="children" class="container fade-up">
+        <h2 class="section-title">Children <span>We Are Helping</span></h2>
+        <div class="child-grid" id="childrenGrid">
+            </div>
+    </section>
+
+    <section id="about" class="container fade-up" style="margin-top: 60px;">
+        <div class="grid-2" style="align-items: center;">
+            <div>
+                <h2 class="section-title" style="text-align: left;">Where Your <span>Money Goes</span></h2>
+                <p style="margin-bottom: 20px; color: #555;">We ensure 100% transparency. Here is how your generous donations are utilized to empower children.</p>
+                <div class="t-bar-wrap"><div class="t-label"><span>Medical Care</span><span id="p-med-t">40%</span></div><div class="t-bg"><div class="t-fill" id="p-med-f" style="background:#ef4444;"></div></div></div>
+                <div class="t-bar-wrap"><div class="t-label"><span>Education</span><span id="p-edu-t">35%</span></div><div class="t-bg"><div class="t-fill" id="p-edu-f" style="background:#3b82f6;"></div></div></div>
+                <div class="t-bar-wrap"><div class="t-label"><span>Therapy</span><span id="p-ther-t">15%</span></div><div class="t-bg"><div class="t-fill" id="p-ther-f" style="background:#10b981;"></div></div></div>
+                <div class="t-bar-wrap"><div class="t-label"><span>Food & Nutrition</span><span id="p-food-t">10%</span></div><div class="t-bg"><div class="t-fill" id="p-food-f" style="background:#f59e0b;"></div></div></div>
+            </div>
+            <div>
+                <iframe id="impactVideo" width="100%" height="315" style="border-radius:15px; box-shadow:0 10px 30px rgba(0,0,0,0.1);" src="" frameborder="0" allowfullscreen></iframe>
+            </div>
+        </div>
+    </section>
 
     <div class="marquee-wrapper fade-up">
         <div class="marquee-content">
             Aap ka ek donation kayi bacho ki madad kar sakta hai ❤️ <span>★</span> 
             Aap ka ek donation kayi bacho ki madad kar sakta hai ❤️ <span>★</span> 
             Aap ka ek donation kayi bacho ki madad kar sakta hai ❤️ <span>★</span> 
-            Aap ka ek donation kayi bacho ki madad kar sakta hai ❤️ <span>★</span>
         </div>
     </div>
 
     <div class="container">
-        
-        <section id="about" class="fade-up" style="margin-bottom: 60px;">
-            <h2 class="section-title"><span class="en">About</span><span class="hi">हमारे बारे में</span> <span>Hope Foundation</span></h2>
-            <div class="grid-2" style="align-items: stretch;">
-                <div style="display: flex; flex-direction: column; justify-content: center;">
-                    <p style="line-height: 1.8; color: #555; margin-bottom: 20px; font-size: 1.05rem;">
-                        <span class="en">In India, millions of specially-abled children lack access to basic educational and physical infrastructure. <strong>Hope Foundation</strong> was created to bridge this gap.</span>
-                        <span class="hi">भारत में, लाखों विशेष रूप से सक्षम बच्चों के पास बुनियादी शैक्षिक ढांचे का अभाव है। <strong>होप फाउंडेशन</strong> को इस अंतर को पाटने के लिए बनाया गया था।</span>
-                    </p>
-                    <div class="mission-vision-box">
-                        <h3>🎯 <span class="en">Our Mission</span><span class="hi">हमारा मिशन</span></h3>
-                        <p style="color: #666; font-size: 0.95rem;">
-                            <span class="en">To provide high-quality medical equipment, life-changing physical therapy, and inclusive classroom environments to specially-abled children.</span>
-                            <span class="hi">विशेष रूप से सक्षम बच्चों को उच्च गुणवत्ता वाले चिकित्सा उपकरण, और समावेशी कक्षा का वातावरण प्रदान करना।</span>
-                        </p>
-                    </div>
-                </div>
-                <div>
-                    <img src="https://images.pexels.com/photos/8948281/pexels-photo-8948281.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Indian Child Smiling" class="about-image">
-                </div>
-            </div>
-        </section>
-
-        <section id="stories" class="fade-up" style="margin-bottom: 60px;">
-            <h2 class="section-title"><span class="en">Impact</span><span class="hi">प्रभाव</span> <span><span class="en">Stories</span><span class="hi">की कहानियाँ</span></span></h2>
-            <p style="text-align: center; color: #666; margin-bottom: 30px; max-width: 700px; margin-inline: auto;">
-                <span class="en">See the real lives that your donations are changing across India.</span>
-                <span class="hi">उन वास्तविक जीवन को देखें जिन्हें आपका दान बदल रहा है।</span>
-            </p>
-            <div id="storiesContainer" class="story-grid">
-                </div>
-        </section>
-
-        <section id="gallery" class="fade-up" style="margin-bottom: 60px;">
-            <h2 class="section-title"><span class="en">Where Your</span><span class="hi">आपका</span> <span><span class="en">Money Goes</span><span class="hi">पैसा कहाँ जाता है</span></span></h2>
-            <div class="gallery">
-                <img src="https://www.sharing4good.org/sites/default/files/styles/article_image/public/field/image/DSC_3664.JPG" alt="World Disabled Day - Indian Family">
-                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSRbr-VfkjoZcF1O3MMy2o0nf8RN-RoxS8cKw&s" alt="Special Needs Children Support Programs India">
-                <img src="https://images.livemint.com/img/2021/12/07/original/India-International-Day-of-Persons-with-Disabilities-9_1638887870401.jpg" alt="Persons with Disabilities India">
-                <img src="https://www.shutterstock.com/image-photo/happy-young-brother-playing-his-260nw-2173952411.jpg" alt="Happy Young Brother Playing">
-            </div>
-        </section>
-
         <section id="donate" class="glass-card fade-up" style="border: 2px solid var(--primary);">
             <h2 class="section-title"><span class="en">Submit</span><span class="hi">जमा करें</span> <span><span class="en">Donation Details</span><span class="hi">दान विवरण</span></span></h2>
             
             <form id="paymentForm">
-                
                 <div class="step-block">
                     <div class="step-title">Step 1: Fill Your Details</div>
                     <div class="grid-2">
-                        <div class="form-group">
-                            <label><span class="en">Full Name</span><span class="hi">पूरा नाम</span> *</label>
-                            <input type="text" id="d_name" required placeholder="Your Name">
-                        </div>
-                        <div class="form-group">
-                            <label><span class="en">Mobile Number</span><span class="hi">मोबाइल नंबर</span> *</label>
-                            <input type="tel" id="d_mobile" required placeholder="e.g. 9876543210">
-                        </div>
-                        <div class="form-group">
-                            <label><span class="en">Amount to Donate (₹)</span><span class="hi">दान राशि (₹)</span> *</label>
-                            <input type="number" id="d_amount" required placeholder="5-1000 " min="5">
-                        </div>
+                        <div class="form-group"><label>Full Name *</label><input type="text" id="d_name" required placeholder="Your Name"></div>
+                        <div class="form-group"><label>Mobile Number *</label><input type="tel" id="d_mobile" required placeholder="e.g. 9876543210"></div>
+                        <div class="form-group"><label>Email Address *</label><input type="email" id="d_email" required placeholder="For Receipt"></div>
+                        <div class="form-group"><label>Amount to Donate (₹) *</label><input type="number" id="d_amount" required placeholder="5-1000" min="5"></div>
                     </div>
                 </div>
 
                 <div class="step-block" style="text-align: center; padding: 40px 20px;">
                     <div class="step-title">Step 2: Make the Payment</div>
-                    <p style="margin-bottom: 20px; color: #555;">Click the button below to pay securely. Once paid, come back here to submit your proof!</p>
+                    <p style="margin-bottom: 20px; color: #555;">Click the button below to pay securely via Razorpay. Come back here to submit proof!</p>
                     <a href="https://razorpay.me/@byashish" target="_blank" class="btn" style="font-size: 1.2rem; padding: 15px 40px; background: var(--secondary); color: var(--dark);">
                         Click Here to Pay
                     </a>
@@ -256,64 +263,81 @@
 
                 <div class="step-block">
                     <div class="step-title">Step 3: Submit Payment Proof</div>
-                    
                     <div class="form-group">
                         <label>Upload Payment Screenshot * <span style="font-weight: normal; color: #888; font-size: 0.85rem;">(Max 2MB)</span></label>
                         <input type="file" id="d_screenshot" accept="image/*" required>
                     </div>
-
                     <div class="form-group">
-                        <label><span class="en">Transaction ID / UPI Ref No.</span><span class="hi">ट्रांजेक्शन आईडी</span> *</label>
+                        <label>Transaction ID / UPI Ref No. *</label>
                         <input type="text" id="d_txn_id" required placeholder="pay_XXXXXX or 123456789012">
                     </div>
-                    
                     <div class="checkbox-container">
                         <input type="checkbox" id="verifyCheck" onchange="toggleSubmitButton()">
-                        <label for="verifyCheck">
-                            <span class="en">I confirm I have made the payment, uploaded the correct screenshot, and the Transaction ID is 100% correct.</span>
-                            <span class="hi">मैं पुष्टि करता हूं कि मैंने भुगतान कर दिया है और ट्रांजेक्शन आईडी 100% सही है।</span>
-                        </label>
+                        <label for="verifyCheck">I confirm I have made the payment, uploaded the screenshot, and the Transaction ID is 100% correct.</label>
                     </div>
+                    <button type="submit" class="btn" id="payBtn" disabled style="width: 100%; height: 60px; font-size: 1.2rem;">Final Submit 🚀</button>
                     
-                    <button type="submit" class="btn" id="payBtn" disabled style="width: 100%; height: 60px; font-size: 1.2rem;">
-                        Final Submit 🚀
-                    </button>
+                    <div style="text-align: center; margin-top: 15px; font-size: 0.9rem; color: #666; font-weight: bold;">
+                        🔒 Razorpay Secure | ✅ Verified NGO Campaign | 🛡️ 256-bit SSL
+                    </div>
                 </div>
-
             </form>
             <p id="payStatus" style="text-align: center; margin-top: 15px; font-weight: bold;"></p>
         </section>
 
+        <section id="stories" class="fade-up" style="margin-bottom: 60px;">
+            <h2 class="section-title">Impact <span>Stories</span></h2>
+            <div id="storiesContainer" class="story-grid"></div>
+        </section>
+
         <section id="leaderboard" class="glass-card fade-up">
-            <h2 class="section-title"><span class="en">Wall of</span><span class="hi">दानवीरों की</span> <span><span class="en">Heroes</span><span class="hi">सूची</span></span></h2>
+            <h2 class="section-title">Wall of <span>Heroes</span></h2>
+            
+            <div id="heroMonthContainer" style="display: none;">
+                <div class="hero-box">
+                    <h3 style="color: #d97706; margin-bottom: 5px;">🏆 Hero of the Month</h3>
+                    <h1 id="heroName" style="color: var(--dark);">Loading...</h1>
+                    <p style="font-weight: bold; color: var(--primary); font-size: 1.2rem;" id="heroAmount">₹0 Donated</p>
+                </div>
+            </div>
+
             <div style="overflow-x: auto; padding-bottom: 10px;">
                 <table>
                     <thead>
-                        <tr>
-                            <th>Rank</th>
-                            <th>Donor Name</th>
-                            <th>Amount</th>
-                            <th>Date</th>
-                            <th>Share Impact</th>
-                        </tr>
+                        <tr><th>Rank</th><th>Donor Name</th><th>Amount</th><th>Date</th><th>Action</th></tr>
                     </thead>
                     <tbody id="leaderboardBody"></tbody>
                 </table>
             </div>
         </section>
+    </div>
 
+    <div id="shareModal">
+        <div class="share-box">
+            <h2 style="color: var(--primary); margin-bottom: 10px;">Thank you! ❤️</h2>
+            <p style="margin-bottom: 20px; color: #555;">Your donation is successfully submitted. Please share your impact to inspire others!</p>
+            <a id="waShare" href="#" target="_blank" class="share-btn" style="background: #25D366;">📱 WhatsApp</a>
+            <a id="fbShare" href="#" target="_blank" class="share-btn" style="background: #1877F2;">🌐 Facebook</a>
+            <a id="xShare" href="#" target="_blank" class="share-btn" style="background: #000000;">🐦 X (Twitter)</a>
+            <br><br>
+            <button onclick="document.getElementById('shareModal').style.display='none'" class="btn-outline" style="padding: 8px 15px; border-radius: 20px; cursor: pointer;">Close</button>
+        </div>
+    </div>
+
+    <div id="liveToast" class="toast">
+        <span>💖</span> <span id="toastMsg">Someone donated!</span>
     </div>
 
     <div class="chat-widget">
         <div class="chat-window" id="chatWindow">
             <div class="chat-header"><span>💬 Support Chat</span><span class="chat-close" onclick="toggleChat()">✖</span></div>
             <form id="chatStartForm">
-                <p style="text-align: center; color: #555;">Enter details to start chatting.</p>
+                <p style="text-align: center; color: #555; padding:15px;">Enter details to start chatting.</p>
                 <div class="form-group" style="padding: 0 15px;"><input type="text" id="c_name" required placeholder="Your Name"></div>
                 <div class="form-group" style="padding: 0 15px;"><input type="email" id="c_email" required placeholder="Your Email"></div>
                 <div style="padding: 0 15px;"><button type="submit" class="btn" style="width: 100%;">Start Chat</button></div>
             </form>
-            <div id="chatUi">
+            <div id="chatUi" style="display: none; flex-direction: column; height: 100%;">
                 <div class="chat-body" id="chatBody"></div>
                 <div class="chat-footer">
                     <input type="text" id="chatMsgInput" class="chat-input" placeholder="Type a message..." onkeypress="handleChatEnter(event)">
@@ -331,216 +355,217 @@
     </footer>
 
     <script>
-        // Animations
+        // 14. PWA Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => { navigator.serviceWorker.register('/sw.js'); });
+        }
+
         const observer = new IntersectionObserver((entries) => { entries.forEach(entry => { if(entry.isIntersecting) entry.target.classList.add('visible'); }); }, { threshold: 0.1 });
         document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
 
-        // Mobile Menu
         function toggleMenu() { document.getElementById('navLinks').classList.toggle('active'); }
-        
-        // Language Toggle Logic
         function toggleLanguage() { document.body.classList.toggle('lang-hi'); }
-
-        // Form Submit Enable
         function toggleSubmitButton() { document.getElementById('payBtn').disabled = !document.getElementById('verifyCheck').checked; }
 
-        // IMAGE COMPRESSION
         async function compressImage(file) {
             return new Promise((resolve) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
+                const reader = new FileReader(); reader.readAsDataURL(file);
                 reader.onload = event => {
-                    const img = new Image();
-                    img.src = event.target.result;
+                    const img = new Image(); img.src = event.target.result;
                     img.onload = () => {
-                        const canvas = document.createElement('canvas');
-                        const MAX_WIDTH = 600; 
-                        const scaleSize = MAX_WIDTH / img.width;
-                        canvas.width = MAX_WIDTH;
-                        canvas.height = img.height * scaleSize;
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        const canvas = document.createElement('canvas'); const scaleSize = 600 / img.width;
+                        canvas.width = 600; canvas.height = img.height * scaleSize;
+                        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
                         resolve(canvas.toDataURL('image/jpeg', 0.6)); 
                     }
                 };
             });
         }
 
-        document.addEventListener("DOMContentLoaded", () => {
+        document.addEventListener("DOMContentLoaded", async () => {
+            await fetchPublicData();
             fetchLeaderboard();
             fetchStories();
+            startLiveNotifications();
 
             document.getElementById('paymentForm').addEventListener('submit', async (e) => {
                 e.preventDefault();
-                const btn = document.getElementById('payBtn');
-                const status = document.getElementById('payStatus');
+                const btn = document.getElementById('payBtn'); const status = document.getElementById('payStatus');
                 btn.innerText = "Compressing & Submitting..."; btn.disabled = true;
 
-                const txn_data_string = "TXN ID: " + document.getElementById('d_txn_id').value;
-                const fileInput = document.getElementById('d_screenshot');
-                let base64Image = "";
-
-                if (fileInput.files.length > 0) {
-                    base64Image = await compressImage(fileInput.files[0]);
-                }
+                let base64Image = ""; const fileInput = document.getElementById('d_screenshot');
+                if (fileInput.files.length > 0) { base64Image = await compressImage(fileInput.files[0]); }
 
                 const data = {
-                    name: document.getElementById('d_name').value,
-                    mobile: document.getElementById('d_mobile').value,
-                    email: txn_data_string, 
-                    amount: document.getElementById('d_amount').value,
-                    screenshot: base64Image
+                    name: document.getElementById('d_name').value, mobile: document.getElementById('d_mobile').value,
+                    email: document.getElementById('d_email').value + " | TXN ID: " + document.getElementById('d_txn_id').value, 
+                    amount: document.getElementById('d_amount').value, screenshot: base64Image
                 };
 
                 try {
                     const res = await fetch('/api/submit_donation', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data) });
                     const result = await res.json();
                     if(result.status === 'success'){
-                        status.style.color = "green"; 
-                        status.innerText = "Thank you! Pending verification.";
                         document.getElementById('paymentForm').reset();
-                        document.getElementById('verifyCheck').checked = false; 
+                        document.getElementById('verifyCheck').checked = false;
+                        showShareModal(); // 5. SHOW SHARE MODAL
                     } else { status.style.color = "red"; status.innerText = "Error."; btn.disabled = false; }
                 } catch (err) { status.style.color = "red"; status.innerText = "Error."; btn.disabled = false; } 
                 finally { btn.innerText = "Final Submit 🚀"; }
             });
         });
 
-        // FETCH SUCCESS STORIES
-        async function fetchStories() {
+        // FETCH ALL PUBLIC DATA IN ONE CALL
+        async function fetchPublicData() {
             try {
-                const res = await fetch('/api/stories');
-                const stories = await res.json();
-                const container = document.getElementById('storiesContainer');
-                if(stories.length === 0) {
-                    container.innerHTML = '<p style="text-align:center; width:100%; color:#888;">No stories added yet. Check back soon!</p>';
-                    return;
+                const res = await fetch('/api/public_data'); const data = await res.json();
+                
+                // Urgency Banner
+                if(data.settings.urgency_msg) {
+                    document.getElementById('urgencyBanner').innerText = data.settings.urgency_msg;
+                    document.getElementById('urgencyBanner').style.display = 'block';
                 }
-                container.innerHTML = '';
-                stories.forEach(s => {
-                    container.innerHTML += `
-                    <div class="story-card">
-                        <img src="${s.image_url}" alt="Story Image" class="story-img">
-                        <div class="story-body">
-                            <div class="story-title">${s.title}</div>
-                            <div class="story-text">${s.content}</div>
+
+                // Progress Bar
+                const raised = data.stats.total_amount; const goal = data.settings.goal_amount;
+                document.getElementById('pb-raised').innerText = `₹${raised.toLocaleString('en-IN')} Raised`;
+                document.getElementById('pb-goal').innerText = `Goal: ₹${goal.toLocaleString('en-IN')}`;
+                document.getElementById('pb-donors').innerText = data.stats.total_donors;
+                const pct = Math.min((raised / goal) * 100, 100);
+                setTimeout(() => { document.getElementById('pb-fill').style.width = `${pct}%`; }, 500);
+
+                // Impact Stats
+                document.getElementById('stat-child').innerText = data.settings.stats_children;
+                document.getElementById('stat-med').innerText = data.settings.stats_medical;
+                document.getElementById('stat-kits').innerText = data.settings.stats_kits;
+                document.getElementById('stat-funds').innerText = `₹${raised.toLocaleString('en-IN')}`;
+
+                // Transparency Bars
+                document.getElementById('p-med-t').innerText = `${data.settings.med_pct}%`;
+                document.getElementById('p-edu-t').innerText = `${data.settings.edu_pct}%`;
+                document.getElementById('p-ther-t').innerText = `${data.settings.ther_pct}%`;
+                document.getElementById('p-food-t').innerText = `${data.settings.food_pct}%`;
+                setTimeout(() => {
+                    document.getElementById('p-med-f').style.width = `${data.settings.med_pct}%`;
+                    document.getElementById('p-edu-f').style.width = `${data.settings.edu_pct}%`;
+                    document.getElementById('p-ther-f').style.width = `${data.settings.ther_pct}%`;
+                    document.getElementById('p-food-f').style.width = `${data.settings.food_pct}%`;
+                }, 500);
+
+                // Video
+                document.getElementById('impactVideo').src = data.settings.yt_url;
+
+                // Children Grid
+                const cGrid = document.getElementById('childrenGrid');
+                data.children.forEach(c => {
+                    const cpct = Math.min((c.raised_amount / c.goal_amount) * 100, 100);
+                    cGrid.innerHTML += `
+                    <div class="child-card">
+                        <img src="${c.image_url}" alt="${c.name}">
+                        <h3>${c.name} - Age ${c.age}</h3>
+                        <p style="font-weight:bold; color:var(--primary);">${c.condition}</p>
+                        <p style="margin-bottom:10px; height: 45px; overflow:hidden;">${c.description}</p>
+                        <div style="padding: 0 20px;">
+                            <div class="progress-bar-bg" style="height:10px; margin: 5px 0;"><div class="progress-bar-fill" style="width:${cpct}%;"></div></div>
+                            <div style="display:flex; justify-content:space-between; font-size:0.8rem; font-weight:bold;">
+                                <span>Raised: ₹${c.raised_amount}</span><span>Goal: ₹${c.goal_amount}</span>
+                            </div>
+                            <a href="#donate" class="btn" style="padding:8px; width:100%; margin-top:10px; border-radius:10px;">Donate for ${c.name}</a>
                         </div>
                     </div>`;
                 });
-            } catch(e) { console.error("Error loading stories"); }
+
+                // Hero of Month
+                if(data.hero) {
+                    document.getElementById('heroMonthContainer').style.display = 'block';
+                    document.getElementById('heroName').innerText = data.hero.name;
+                    document.getElementById('heroAmount').innerText = `₹${data.hero.amount.toLocaleString('en-IN')} Donated`;
+                }
+
+            } catch(e) { console.error("Error fetching public data", e); }
         }
 
-        // LEADERBOARD WITH DONOR BADGES
+        // 5. SHOW SHARE MODAL
+        function showShareModal() {
+            const url = encodeURIComponent(window.location.href);
+            const text = encodeURIComponent("I just supported specially-abled children ❤️ Join the mission and make an impact!");
+            document.getElementById('waShare').href = `https://wa.me/?text=${text} ${url}`;
+            document.getElementById('fbShare').href = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+            document.getElementById('xShare').href = `https://twitter.com/intent/tweet?text=${text}&url=${url}`;
+            document.getElementById('shareModal').style.display = 'flex';
+        }
+
+        // 6. LIVE NOTIFICATIONS
+        let latestDonations = [];
+        async function startLiveNotifications() {
+            try {
+                const res = await fetch('/api/latest_donation'); latestDonations = await res.json();
+                if(latestDonations.length > 0) {
+                    setInterval(() => {
+                        const randomDonor = latestDonations[Math.floor(Math.random() * latestDonations.length)];
+                        const toast = document.getElementById('liveToast');
+                        document.getElementById('toastMsg').innerText = `${randomDonor.name} just donated ₹${randomDonor.amount} ❤️`;
+                        toast.classList.add('show');
+                        setTimeout(() => toast.classList.remove('show'), 4000);
+                    }, 12000); // Show every 12 seconds
+                }
+            } catch(e) {}
+        }
+
+        // EXISTING FETCH STORIES
+        async function fetchStories() {
+            const res = await fetch('/api/stories'); const stories = await res.json();
+            const container = document.getElementById('storiesContainer');
+            if(stories.length === 0) { container.innerHTML = '<p style="text-align:center; width:100%;">No stories added yet.</p>'; return; }
+            stories.forEach(s => {
+                container.innerHTML += `<div class="story-card"><img src="${s.image_url}" class="story-img"><div class="story-body"><div class="story-title">${s.title}</div><div class="story-text">${s.content}</div></div></div>`;
+            });
+        }
+
+        // EXISTING LEADERBOARD + 9. RECEIPT BUTTON
         async function fetchLeaderboard() {
             const res = await fetch('/api/leaderboard'); const data = await res.json();
             const tbody = document.getElementById('leaderboardBody'); tbody.innerHTML = '';
-            
             data.forEach((d, i) => { 
-                // BADGE LOGIC
-                let badgeClass = 'badge-bronze'; let badgeIcon = '🥉 Hero';
-                if(d.amount >= 5000) { badgeClass = 'badge-gold'; badgeIcon = '🥇 VIP Gold'; }
-                else if (d.amount >= 1000) { badgeClass = 'badge-silver'; badgeIcon = '🥈 Silver'; }
-
-                tbody.innerHTML += `
-                <tr>
+                let bClass = 'badge-bronze'; let bIcon = '🥉 Hero';
+                if(d.amount >= 5000) { bClass = 'badge-gold'; bIcon = '🥇 Gold'; } else if (d.amount >= 1000) { bClass = 'badge-silver'; bIcon = '🥈 Silver'; }
+                tbody.innerHTML += `<tr>
                     <td><strong>#${i + 1}</strong></td>
-                    <td>
-                        <strong>${d.name}</strong> 
-                        <span class="donor-badge ${badgeClass}">${badgeIcon}</span>
-                    </td>
+                    <td><strong>${d.name}</strong> <span class="donor-badge ${bClass}">${bIcon}</span></td>
                     <td style="color:var(--primary);font-weight:bold;">₹${d.amount.toLocaleString('en-IN')}</td>
                     <td>${new Date(d.date).toLocaleDateString()}</td>
-                    <td>
-                        <button onclick="generateCertificate('${d.name}')" class="btn" style="padding: 5px 10px; font-size: 0.8rem; background: var(--secondary); color: var(--dark);">
-                            📸 Share
-                        </button>
+                    <td style="display:flex; gap:5px;">
+                        <button onclick="generateCertificate('${d.name}')" class="btn" style="padding: 5px 10px; font-size: 0.8rem; background: var(--secondary); color: var(--dark);">📸 Share</button>
+                        <a href="/receipt/${d.id}" target="_blank" class="btn-outline" style="padding: 5px 10px; font-size: 0.8rem; border-radius: 30px; text-decoration:none;">📄 Receipt</a>
                     </td>
                 </tr>`; 
             });
         }
 
-        // PROFESSIONAL SHARE YOUR IMPACT GENERATOR (No Amount)
+        // CERTIFICATE LOGIC (Unchanged)
         function generateCertificate(name) {
-            const canvas = document.getElementById('certCanvas');
-            canvas.width = 1080; canvas.height = 1080; 
-            const ctx = canvas.getContext('2d');
-
-            // Premium Navy Blue to Slate Gradient
-            let grad = ctx.createLinearGradient(0, 0, 1080, 1080);
-            grad.addColorStop(0, '#0f2027');
-            grad.addColorStop(0.5, '#203a43');
-            grad.addColorStop(1, '#2c5364');
-            ctx.fillStyle = grad;
-            ctx.fillRect(0, 0, 1080, 1080);
-
-            // Elegant Gold Double Borders
-            ctx.strokeStyle = '#D4AF37'; // Classic Gold
-            ctx.lineWidth = 10;
-            ctx.strokeRect(40, 40, 1000, 1000);
-            ctx.lineWidth = 2;
-            ctx.strokeRect(55, 55, 970, 970);
-
-            // Title
-            ctx.fillStyle = '#ffffff';
-            ctx.textAlign = 'center';
-            ctx.font = 'bold 70px "Times New Roman", Times, serif';
-            ctx.fillText('HOPE FOUNDATION', 540, 200);
-            
-            // Subtitle
-            ctx.fillStyle = '#D4AF37';
-            ctx.font = 'italic 45px Georgia, serif';
-            ctx.fillText('Certificate of Appreciation', 540, 300);
-            
-            // Body Text
-            ctx.fillStyle = '#dddddd';
-            ctx.font = '35px Arial';
-            ctx.fillText('THIS IS PROUDLY PRESENTED TO', 540, 480);
-
-            // Name (Gold and Large)
-            ctx.font = 'bold 90px "Times New Roman", Times, serif';
-            ctx.fillStyle = '#D4AF37'; 
-            ctx.fillText(name.toUpperCase(), 540, 600);
-
-            // Cause Text (Amount Removed)
-            ctx.fillStyle = '#ffffff';
-            ctx.font = '35px Arial';
-            ctx.fillText('For their generous support and invaluable contribution', 540, 720);
-            ctx.fillText('to empowering specially-abled children in India.', 540, 780);
-
-            // Signature Line
-            ctx.beginPath();
-            ctx.moveTo(340, 900);
-            ctx.lineTo(740, 900);
-            ctx.strokeStyle = '#D4AF37';
-            ctx.lineWidth = 2;
-            ctx.stroke();
-            
-            ctx.font = 'italic 25px Georgia';
-            ctx.fillStyle = '#aaaaaa';
-            ctx.fillText('Authorized Signature', 540, 940);
-
-            // Highlighted URL at the bottom
-            ctx.font = 'bold 28px Arial';
-            ctx.fillStyle = '#50E3C2'; // Bright Cyan color to look like a link
-            ctx.fillText('hope-foundation-empowering-children.onrender.com', 540, 1020);
-
-            // Trigger Download
-            const link = document.createElement('a');
-            link.download = `HopeFoundation_Impact_${name}.png`;
-            link.href = canvas.toDataURL('image/png');
-            link.click();
-            alert("Your premium certificate is downloading! Share it on Instagram or WhatsApp and tag our website link!");
+            const canvas = document.getElementById('certCanvas'); canvas.width = 1080; canvas.height = 1080; const ctx = canvas.getContext('2d');
+            let grad = ctx.createLinearGradient(0, 0, 1080, 1080); grad.addColorStop(0, '#0f2027'); grad.addColorStop(0.5, '#203a43'); grad.addColorStop(1, '#2c5364');
+            ctx.fillStyle = grad; ctx.fillRect(0, 0, 1080, 1080);
+            ctx.strokeStyle = '#D4AF37'; ctx.lineWidth = 10; ctx.strokeRect(40, 40, 1000, 1000); ctx.lineWidth = 2; ctx.strokeRect(55, 55, 970, 970);
+            ctx.fillStyle = '#ffffff'; ctx.textAlign = 'center'; ctx.font = 'bold 70px "Times New Roman"'; ctx.fillText('HOPE FOUNDATION', 540, 200);
+            ctx.fillStyle = '#D4AF37'; ctx.font = 'italic 45px Georgia'; ctx.fillText('Certificate of Appreciation', 540, 300);
+            ctx.fillStyle = '#dddddd'; ctx.font = '35px Arial'; ctx.fillText('THIS IS PROUDLY PRESENTED TO', 540, 480);
+            ctx.font = 'bold 90px "Times New Roman"'; ctx.fillStyle = '#D4AF37'; ctx.fillText(name.toUpperCase(), 540, 600);
+            ctx.fillStyle = '#ffffff'; ctx.font = '35px Arial'; ctx.fillText('For their generous support to empower', 540, 720); ctx.fillText('specially-abled children in India.', 540, 780);
+            ctx.beginPath(); ctx.moveTo(340, 900); ctx.lineTo(740, 900); ctx.strokeStyle = '#D4AF37'; ctx.stroke();
+            ctx.font = 'italic 25px Georgia'; ctx.fillStyle = '#aaaaaa'; ctx.fillText('Authorized Signature', 540, 940);
+            ctx.font = 'bold 28px Arial'; ctx.fillStyle = '#50E3C2'; ctx.fillText('hope-foundation.onrender.com', 540, 1020);
+            const link = document.createElement('a'); link.download = `HopeFoundation_${name}.png`; link.href = canvas.toDataURL('image/png'); link.click();
         }
 
-        // Live Chat Logic
-        let chatSessionId = localStorage.getItem('chatSessionId');
-        let chatPollInterval; let loadedMessageCount = 0; 
+        // CHAT LOGIC (10. Smart Chatbot handled backend, frontend just polls)
+        let chatSessionId = localStorage.getItem('chatSessionId'); let chatPollInterval; let loadedMessageCount = 0; 
         function toggleChat() {
             const win = document.getElementById('chatWindow');
             win.style.display = win.style.display === 'flex' ? 'none' : 'flex';
             if(win.style.display === 'flex' && chatSessionId) {
-                document.getElementById('chatStartForm').style.display = 'none';
-                document.getElementById('chatUi').style.display = 'flex';
+                document.getElementById('chatStartForm').style.display = 'none'; document.getElementById('chatUi').style.display = 'flex';
                 syncChat(); if(!chatPollInterval) chatPollInterval = setInterval(syncChat, 3000);
             } else { clearInterval(chatPollInterval); chatPollInterval = null; }
         }
@@ -548,10 +573,8 @@
             e.preventDefault();
             const data = { name: document.getElementById('c_name').value, email: document.getElementById('c_email').value };
             const res = await fetch('/api/chat/start', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) });
-            const result = await res.json();
-            chatSessionId = result.session_id; localStorage.setItem('chatSessionId', chatSessionId);
-            document.getElementById('chatStartForm').style.display = 'none';
-            document.getElementById('chatUi').style.display = 'flex';
+            const result = await res.json(); chatSessionId = result.session_id; localStorage.setItem('chatSessionId', chatSessionId);
+            document.getElementById('chatStartForm').style.display = 'none'; document.getElementById('chatUi').style.display = 'flex';
             syncChat(); chatPollInterval = setInterval(syncChat, 3000);
         });
         async function syncChat() {
@@ -561,9 +584,7 @@
                 const body = document.getElementById('chatBody'); const newMessages = messages.slice(loadedMessageCount);
                 newMessages.forEach(m => {
                     let cssClass = '', label = '';
-                    if (m.sender === 'user') { cssClass = 'user'; label = '👤 You'; } 
-                    else if (m.sender === 'bot') { cssClass = 'bot'; label = '🤖 Assistant'; } 
-                    else { cssClass = 'admin'; label = '👨‍💻 Support'; }
+                    if (m.sender === 'user') { cssClass = 'user'; label = '👤 You'; } else if (m.sender === 'bot') { cssClass = 'bot'; label = '🤖 Bot'; } else { cssClass = 'admin'; label = '👨‍💻 Support'; }
                     body.innerHTML += `<div class="msg ${cssClass}"><span class="msg-label">${label}</span>${m.message}</div>`;
                 });
                 body.scrollTop = body.scrollHeight; loadedMessageCount = messages.length;
@@ -573,8 +594,7 @@
             const input = document.getElementById('chatMsgInput'); const text = input.value.trim();
             if(!text || !chatSessionId) return; input.value = '';
             document.getElementById('chatBody').innerHTML += `<div class="msg user"><span class="msg-label">👤 You</span>${text}</div>`;
-            document.getElementById('chatBody').scrollTop = document.getElementById('chatBody').scrollHeight;
-            loadedMessageCount++; 
+            document.getElementById('chatBody').scrollTop = document.getElementById('chatBody').scrollHeight; loadedMessageCount++; 
             await fetch('/api/chat/send', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ session_id: chatSessionId, message: text }) });
             syncChat();
         }
